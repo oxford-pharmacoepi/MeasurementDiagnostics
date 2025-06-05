@@ -8,8 +8,8 @@ test_that("measurementCohortDiagnostics works", {
     dplyr::tibble(
       result_id = 1:3L,
       result_type = c("measurement_records", "measurement_value_as_numeric", "measurement_value_as_concept"),
-      package_name = "measurementDiagnostics",
-      package_version = as.character(utils::packageVersion("measurementDiagnostics")),
+      package_name = "MeasurementDiagnostics",
+      package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name &&& concept_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("sex &&& age_group", 3)),
       additional = c("concept_id &&& cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),

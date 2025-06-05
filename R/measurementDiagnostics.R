@@ -8,24 +8,24 @@
 #'
 #' @examples
 #' \donttest{
-#' library(measurementDiagnostics)
+#' library(MeasurementDiagnostics)
 #'
 #' cdm <- mockMeasurementDiagnostics()
 #'
-#' result <- measurementDiagnostics(
+#' result <- MeasurementDiagnostics(
 #'   cdm = cdm, codes = list("test_codelist" = c(3001467L, 45875977L))
 #' )
 #'
 #' CDMConnector::cdmDisconnect(cdm = cdm)
 #' }
 #'
-measurementDiagnostics <- function(cdm,
+MeasurementDiagnostics <- function(cdm,
                                    codes) {
   # check inputs
   codes <- omopgenerics::validateConceptSetArgument(codes)
   prefix <- omopgenerics::tmpPrefix()
 
-  result <- measurementDiagnosticsInternal(
+  result <- MeasurementDiagnosticsInternal(
     cdm = cdm,
     codes = codes,
     cohort = NULL,
@@ -37,7 +37,7 @@ measurementDiagnostics <- function(cdm,
 }
 
 
-measurementDiagnosticsInternal <- function(cdm,
+MeasurementDiagnosticsInternal <- function(cdm,
                                            codes,
                                            cohort,
                                            timing,
@@ -51,7 +51,7 @@ measurementDiagnosticsInternal <- function(cdm,
     cohortName <- omopgenerics::tableName(cohort)
   }
 
-  installedVersion <- as.character(utils::packageVersion("measurementDiagnostics"))
+  installedVersion <- as.character(utils::packageVersion("MeasurementDiagnostics"))
 
   ## measurement cohort
   # settings
@@ -182,7 +182,7 @@ measurementDiagnosticsInternal <- function(cdm,
       settings = omopgenerics::settings(measurementTiming) |>
         dplyr::mutate(
           result_type = "measurement_records",
-          package_name = "measurementDiagnostics",
+          package_name = "MeasurementDiagnostics",
           package_version = installedVersion,
           group = "codelist_name &&& concept_name",
           additional = paste0(c("concept_id", cohortTable), collapse = " &&& "),
@@ -391,7 +391,7 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
       settings = omopgenerics::settings(x) |>
         dplyr::mutate(
           result_type = "measurement_value_as_numeric",
-          package_name = "measurementDiagnostics",
+          package_name = "MeasurementDiagnostics",
           package_version = installedVersion,
           group = "codelist_name &&& concept_name &&& unit_concept_name",
           additional = paste0(c("concept_id", "unit_concept_id", cohortTable), collapse = " &&& "),
@@ -429,7 +429,7 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
       settings = omopgenerics::settings(x) |>
         dplyr::mutate(
           result_type = "measurement_value_as_concept",
-          package_name = "measurementDiagnostics",
+          package_name = "MeasurementDiagnostics",
           package_version = installedVersion,
           group = "codelist_name &&& concept_name",
           additional = paste0(c("concept_id", "value_as_concept_id", cohortTable), collapse = " &&& "),

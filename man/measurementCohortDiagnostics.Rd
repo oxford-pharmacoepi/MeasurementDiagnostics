@@ -26,7 +26,7 @@ Diagnostics of a codelist of measurement codes within a cohort
 }
 \examples{
 \donttest{
-library(measurementDiagnostics)
+library(MeasurementDiagnostics)
 
 cdm <- mockMeasurementDiagnostics()
 
