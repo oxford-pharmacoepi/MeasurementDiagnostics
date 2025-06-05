@@ -15,7 +15,7 @@
 #'
 #' @examples
 #' \donttest{
-#' library(measurementDiagnostics)
+#' library(MeasurementDiagnostics)
 #'
 #' cdm <- mockMeasurementDiagnostics()
 #'

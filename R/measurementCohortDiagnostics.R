@@ -14,7 +14,7 @@
 #'
 #' @examples
 #' \donttest{
-#' library(measurementDiagnostics)
+#' library(MeasurementDiagnostics)
 #'
 #' cdm <- mockMeasurementDiagnostics()
 #'
@@ -36,7 +36,7 @@ measurementCohortDiagnostics <- function(codes,
   cohortName <- omopgenerics::tableName(cohort)
   cdm <- omopgenerics::cdmReference(cohort)
 
-  result <- measurementDiagnosticsInternal(
+  result <- MeasurementDiagnosticsInternal(
     cdm = cdm,
     codes = codes,
     cohort = cohort,
