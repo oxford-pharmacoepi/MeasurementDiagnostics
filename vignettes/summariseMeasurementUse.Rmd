@@ -1,5 +1,5 @@
 ---
-title: "summariseMeasurementUse"
+title: "Summarising measurement use in a dataset"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{summariseMeasurementUse}
@@ -18,12 +18,14 @@ CDMConnector::requireEunomia()
 ```
 
 ## Introduction
-In this example we're going to summarise the characteristics of individuals with an ankle sprain, ankle fracture, forearm fracture, or a hip fracture using the Eunomia synthetic database. 
 
-We'll begin by creating our condition study cohorts with the `generateConceptCohortSet` function from `CDMConnector`. 
+In this vignette we will see how we can summarise the use of measurement concepts in our dataset as a whole. For our example we're going to be interested in measurement concepts related to respiratory function and will use the Eunomia synthetic dataset.
 
-```{r}
+First we will connect to the database and create a cdm reference.
+
+```{r, message=TRUE}
 library(duckdb)
+library(omopgenerics)
 library(CDMConnector)
 library(dplyr, warn.conflicts = FALSE)
 library(ggplot2)
@@ -34,22 +36,45 @@ con <- dbConnect(duckdb(), dbdir = eunomiaDir())
 cdm <- cdmFromCon(
   con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
 )
+cdm
 ```
 
+Now we'll create a codelist with measurement concepts.
 ```{r}
-temp_diagnostics <- summariseMeasurementUse(cdm, list("temp" = 3006322))
-temp_diagnostics |> 
-  glimpse()
-settings(temp_diagnostics) |> 
-  glimpse()
-
-visOmopTable(temp_diagnostics)
+repiratory_function_codes <- newCodelist(list("respiratory function" = c(4052083, 4133840, 3011505)))
+repiratory_function_codes
 ```
 
-
+Once we have got the measurement codes we're interested in, we can run our diagnostics on their use in our dataset. We'll simply call the summariseMeasurementUse() function which will run a series of checks for these concepts. Our results are returned in the summarised_result format.
 ```{r}
-asthma_measurements <- summariseMeasurementUse(cdm, 
-                                              list("asthma" = c(4052083, 4133840, 3011505)))
+repiratory_function_measurements <- summariseMeasurementUse(cdm, repiratory_function_codes)
 
-visOmopTable(asthma_measurements)
+repiratory_function_measurements |> 
+  glimpse()
 ```
+
+We can see each of the checks performed.
+```{r}
+settings(repiratory_function_measurements) |> 
+  pull("result_type") |> 
+  unique()
+```
+
+We can see for example a summary of their use.
+```{r}
+visOmopTable(repiratory_function_measurements |> 
+               filterSettings(result_type == "measurement_records"))
+```
+
+We can also see for example a summary of numeric values.
+```{r}
+visOmopTable(repiratory_function_measurements |> 
+               omopgenerics::filterSettings(result_type == "measurement_value_as_numeric"))
+```
+
+Similarly, we can see a summary of concept values.
+```{r}
+visOmopTable(repiratory_function_measurements |> 
+               omopgenerics::filterSettings(result_type == "measurement_value_as_concept"))
+```
+
