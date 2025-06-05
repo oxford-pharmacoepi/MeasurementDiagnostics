@@ -1,0 +1,55 @@
+---
+title: "measurementDiagnostics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{measurementDiagnostics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>", message = FALSE, warning = FALSE,
+  fig.width = 7
+)
+
+CDMConnector::requireEunomia()
+```
+
+## Introduction
+In this example we're going to summarise the characteristics of individuals with an ankle sprain, ankle fracture, forearm fracture, or a hip fracture using the Eunomia synthetic database. 
+
+We'll begin by creating our condition study cohorts with the `generateConceptCohortSet` function from `CDMConnector`. 
+
+```{r}
+library(duckdb)
+library(CDMConnector)
+library(dplyr, warn.conflicts = FALSE)
+library(ggplot2)
+library(MeasurementDiagnostics)
+library(visOmopResults)
+
+con <- dbConnect(duckdb(), dbdir = eunomiaDir())
+cdm <- cdmFromCon(
+  con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
+)
+```
+
+```{r}
+temp_diagnostics <- MeasurementDiagnostics(cdm, list("temp" = 3006322))
+temp_diagnostics |> 
+  glimpse()
+settings(temp_diagnostics) |> 
+  glimpse()
+
+visOmopTable(temp_diagnostics)
+```
+
+
+```{r}
+asthma_measurements <- MeasurementDiagnostics(cdm, 
+                                              list("asthma" = c(4052083, 4133840, 3011505)))
+
+visOmopTable(asthma_measurements)
+```
