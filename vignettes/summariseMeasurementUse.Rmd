@@ -1,8 +1,8 @@
 ---
-title: "measurementDiagnostics"
+title: "summariseMeasurementUse"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{measurementDiagnostics}
+  %\VignetteIndexEntry{summariseMeasurementUse}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -37,7 +37,7 @@ cdm <- cdmFromCon(
 ```
 
 ```{r}
-temp_diagnostics <- MeasurementDiagnostics(cdm, list("temp" = 3006322))
+temp_diagnostics <- summariseMeasurementUse(cdm, list("temp" = 3006322))
 temp_diagnostics |> 
   glimpse()
 settings(temp_diagnostics) |> 
@@ -48,7 +48,7 @@ visOmopTable(temp_diagnostics)
 
 
 ```{r}
-asthma_measurements <- MeasurementDiagnostics(cdm, 
+asthma_measurements <- summariseMeasurementUse(cdm, 
                                               list("asthma" = c(4052083, 4133840, 3011505)))
 
 visOmopTable(asthma_measurements)

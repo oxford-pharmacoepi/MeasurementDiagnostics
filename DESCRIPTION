@@ -19,11 +19,13 @@ Imports:
 Suggests: 
     CDMConnector,
     CodelistGenerator,
+    visOmopResults,
     duckdb,
     knitr,
     omock,
     rmarkdown,
-    testthat
+    testthat,
+    ggplot2
 Depends: 
     R (>= 4.1)
 License: Apache License (>= 2)

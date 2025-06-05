@@ -12,20 +12,20 @@
 #'
 #' cdm <- mockMeasurementDiagnostics()
 #'
-#' result <- MeasurementDiagnostics(
+#' result <- summariseMeasurementUse(
 #'   cdm = cdm, codes = list("test_codelist" = c(3001467L, 45875977L))
 #' )
 #'
 #' CDMConnector::cdmDisconnect(cdm = cdm)
 #' }
 #'
-MeasurementDiagnostics <- function(cdm,
+summariseMeasurementUse <- function(cdm,
                                    codes) {
   # check inputs
   codes <- omopgenerics::validateConceptSetArgument(codes)
   prefix <- omopgenerics::tmpPrefix()
 
-  result <- MeasurementDiagnosticsInternal(
+  result <- summariseMeasurementUseInternal(
     cdm = cdm,
     codes = codes,
     cohort = NULL,
@@ -37,7 +37,7 @@ MeasurementDiagnostics <- function(cdm,
 }
 
 
-MeasurementDiagnosticsInternal <- function(cdm,
+summariseMeasurementUseInternal <- function(cdm,
                                            codes,
                                            cohort,
                                            timing,

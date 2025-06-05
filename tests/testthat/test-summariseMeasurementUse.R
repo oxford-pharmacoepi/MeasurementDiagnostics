@@ -1,8 +1,8 @@
-test_that("MeasurementDiagnostics works", {
+test_that("summariseMeasurementUse works", {
   skip_on_cran()
   # without cohort
   cdm <- mockMeasurementDiagnostics()
-  res <- MeasurementDiagnostics(cdm = cdm, codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L))
+  res <- summariseMeasurementUse(cdm = cdm, codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L))
   expect_equal(
     omopgenerics::settings(res),
     dplyr::tibble(

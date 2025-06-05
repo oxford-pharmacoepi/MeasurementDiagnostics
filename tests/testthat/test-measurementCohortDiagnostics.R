@@ -1,8 +1,8 @@
-test_that("measurementCohortDiagnostics works", {
+test_that("summariseCohortMeasurementUse works", {
   skip_on_cran()
   # with cohort
   cdm <- mockMeasurementDiagnostics()
-  res <- measurementCohortDiagnostics(codes = list("test" = 3001467L), cohort = cdm$my_cohort, timing = "any")
+  res <- summariseCohortMeasurementUse(codes = list("test" = 3001467L), cohort = cdm$my_cohort, timing = "any")
   expect_equal(
     omopgenerics::settings(res),
     dplyr::tibble(
@@ -88,15 +88,15 @@ test_that("test timings with eunomia", {
   con <- DBI::dbConnect(duckdb::duckdb(), CDMConnector::eunomiaDir())
   cdm <- CDMConnector::cdmFromCon(con, cdmName = "eunomia", cdmSchema = "main", writeSchema = "main")
   cohort <- CohortConstructor::conceptCohort(cdm = cdm, conceptSet = list("condition" = 40481087L), name = "cohort")
-  res_any <- measurementCohortDiagnostics(
+  res_any <- summariseCohortMeasurementUse(
     codes = list("bmi" = c(4024958L, 36304833L), "egfr" = c(1619025L, 1619026L, 3029829L, 3006322L)),
     cohort = cohort, timing = "any"
   )
-  res_during <- measurementCohortDiagnostics(
+  res_during <- summariseCohortMeasurementUse(
     codes = list("bmi" = c(4024958L, 36304833L), "egfr" = c(1619025L, 1619026L, 3029829L, 3006322L)),
     cohort = cohort, timing = "during"
   )
-  res_start <- measurementCohortDiagnostics(
+  res_start <- summariseCohortMeasurementUse(
     codes = list("bmi" = c(4024958L, 36304833L), "egfr" = c(1619025L, 1619026L, 3029829L, 3006322L)),
     cohort = cohort, timing = "cohort_start_date"
   )

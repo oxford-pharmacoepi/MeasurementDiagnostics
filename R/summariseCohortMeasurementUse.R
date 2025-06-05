@@ -18,7 +18,7 @@
 #'
 #' cdm <- mockMeasurementDiagnostics()
 #'
-#' result <- measurementCohortDiagnostics(
+#' result <- summariseCohortMeasurementUse(
 #'   codes = list("test_codelist" = c(3001467L, 45875977L)),
 #'   cohort = cdm$my_cohort, timing = "cohort_start_date"
 #' )
@@ -26,7 +26,7 @@
 #' CDMConnector::cdmDisconnect(cdm = cdm)
 #' }
 #'
-measurementCohortDiagnostics <- function(codes,
+summariseCohortMeasurementUse <- function(codes,
                                          cohort,
                                          timing = "during") {
 
@@ -36,7 +36,7 @@ measurementCohortDiagnostics <- function(codes,
   cohortName <- omopgenerics::tableName(cohort)
   cdm <- omopgenerics::cdmReference(cohort)
 
-  result <- MeasurementDiagnosticsInternal(
+  result <- summariseMeasurementUseInternal(
     cdm = cdm,
     codes = codes,
     cohort = cohort,
