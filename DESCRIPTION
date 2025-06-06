@@ -15,7 +15,8 @@ Imports:
     omopgenerics,
     PatientProfiles,
     purrr,
-    rlang
+    rlang,
+    stringr
 Suggests: 
     CDMConnector,
     CodelistGenerator,
@@ -26,7 +27,8 @@ Suggests:
     rmarkdown,
     testthat,
     ggplot2,
-    gt
+    gt,
+    flextable
 Depends: 
     R (>= 4.1)
 License: Apache License (>= 2)

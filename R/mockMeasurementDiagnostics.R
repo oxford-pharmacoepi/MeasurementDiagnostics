@@ -63,8 +63,8 @@ mockMeasurementDiagnostics <- function(nPerson = 100,
       concept_class_id = "Qualifier Value",
       standard_concept = "S",
       concept_code = c(62482003, 75540009) |> as.character(),
-      valid_start_date = as.Date("1970-01-01"),
-      valid_end_date = as.Date("2099-01-01"),
+      valid_start_date = as.character("1970-01-01"),
+      valid_end_date = as.character("2099-01-01"),
       invalid_reason = NA
     )
   )
