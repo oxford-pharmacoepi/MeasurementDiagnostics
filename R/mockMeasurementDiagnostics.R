@@ -42,11 +42,12 @@ mockMeasurementDiagnostics <- function(nPerson = 100,
     omock::mockObservation(seed = seed) |>
     omock::mockMeasurement(seed = seed) |>
     omock::mockProcedureOccurrence(seed = seed) |>
-    omock::mockCohort(name = "my_cohort", numberCohorts = 2)
+    omock::mockCohort(name = "my_cohort", numberCohorts = 2, seed = seed)
+
   cdm_local$measurement <- cdm_local$measurement |>
     dplyr::mutate(
       unit_concept_id = dplyr::if_else(dplyr::row_number()%%2 == 0, 9529, NA),
-      value_as_number = dplyr::if_else(dplyr::row_number()<6, NA, stats::runif(1, min = 5, max = 150)),
+      value_as_number = dplyr::if_else(dplyr::row_number()<6, NA, seq(from = 5, to = 150, length.out = 2000)),
       value_as_concept_id = dplyr::case_when(
         dplyr::row_number()%%3 == 0 ~ 4328749,
         dplyr::row_number()%%3 == 1 ~ 4267416,
