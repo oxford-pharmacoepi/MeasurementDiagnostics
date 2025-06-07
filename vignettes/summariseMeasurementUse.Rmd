@@ -62,8 +62,7 @@ settings(repiratory_function_measurements) |>
 
 We can see for example a summary of their use.
 ```{r}
-visOmopTable(repiratory_function_measurements |> 
-               filterSettings(result_type == "measurement_records"))
+tableMeasurementTimings(repiratory_function_measurements)
 ```
 
 We can also see for example a summary of numeric values.
