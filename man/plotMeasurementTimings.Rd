@@ -14,7 +14,9 @@ plotMeasurementTimings(
 )
 }
 \arguments{
-\item{x}{Columns to use as x axes.}
+\item{result}{A summarised_result object.}
+
+\item{x}{Columns to use as horizontal axes.}
 
 \item{plotType}{Type of desired formatted table, possibilities are "boxplot" and
 "densityplot".}
@@ -47,5 +49,4 @@ plotMeasurementTimings(result)
 
 cdmDisconnect(cdm)
 }
-
 }
