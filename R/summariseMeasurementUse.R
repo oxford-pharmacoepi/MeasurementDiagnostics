@@ -149,21 +149,20 @@ summariseMeasurementUseInternal <- function(cdm,
   }
 
   # group and strata
-  group <- list("codelist_name", c("codelist_name", "concept_id"))[c(!byConcept, byConcept)]
   strata <- as.list(c("sex", "age_group", "year")[c(bySex, length(ageGroup)>0, byYear)])
   measurement <- measurement |> addStrata(bySex, byYear, ageGroup, measurementCohortName)
 
   ## measurements per subject
   cli::cli_inform(c(">" = "Getting time between records per person."))
   measurementTiming <- measurement |>
-    dplyr::group_by(dplyr::across(dplyr::all_of(c(unlist(group), "subject_id")))) |>
+    dplyr::group_by(.data$codelist_name, .data$subject_id) |>
     dplyr::arrange(.data$cohort_start_date) |>
     dplyr::mutate(previous_measurement = dplyr::lag(.data$cohort_start_date)) %>%
     dplyr::mutate(time = !!CDMConnector::datediff("previous_measurement", "cohort_start_date")) |>
     dplyr::ungroup() |>
     dplyr::collect() |>
     PatientProfiles::summariseResult(
-      group = group,
+      group = list("codelist_name"),
       includeOverallGroup = FALSE,
       strata = strata,
       includeOverallStrata = TRUE,
@@ -174,7 +173,7 @@ summariseMeasurementUseInternal <- function(cdm,
     suppressMessages() |>
     transformMeasurementRecords(
       cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
-      installedVersion, timingName, cohortName, byConcept
+      installedVersion, timingName, cohortName
     )
 
   ## measurement value
@@ -185,7 +184,7 @@ summariseMeasurementUseInternal <- function(cdm,
     dplyr::select(!"value_as_concept_id") |>
     dplyr::collect() |>
     PatientProfiles::summariseResult(
-      group = list(c("codelist_name", "unit_concept_id"), c("codelist_name", "concept_id", "unit_concept_id"))[c(!byConcept, byConcept)],
+      group = list(c("codelist_name", "unit_concept_id"), c("codelist_name", "concept_id", "unit_concept_id"))[c(TRUE, byConcept)],
       includeOverallGroup = FALSE,
       strata = strata,
       includeOverallStrata = TRUE,
@@ -206,7 +205,7 @@ summariseMeasurementUseInternal <- function(cdm,
   measurementConcept <- measurement |>
     dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
     PatientProfiles::summariseResult(
-      group = group,
+      group = list("codelist_name", c("codelist_name", "concept_id"))[c(TRUE, byConcept)],
       includeOverallGroup = FALSE,
       strata = strata,
       includeOverallStrata = TRUE,
@@ -235,7 +234,7 @@ summariseMeasurementUseInternal <- function(cdm,
 
 groupIdToName <- function(x, newSet, cols = c("codelist_name", "concept_name")) {
   x |>
-    dplyr::inner_join(
+    dplyr::left_join(
       newSet |>
         dplyr::select(dplyr::all_of(c("concept_id", "concept_name"))) |>
         dplyr::mutate(concept_id = as.character(.data$concept_id)),
@@ -367,63 +366,31 @@ addIndex <- function(cohort, cols) {
   return(invisible(NULL))
 }
 
-transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timingName, cohortName, byConcept) {
+transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timingName, cohortName) {
 
   cohortTable <- "cohort_table"[!is.null(cohortName)]
   x <- x |>
     dplyr::select(!dplyr::starts_with("additional"))
 
-  if (byConcept) {
-    x <- x |>
-      omopgenerics::splitGroup() |>
-      groupIdToName(newSet = newSet)
-    # fill 0 counts
-    concepts <- as.character(newSet |> dplyr::pull("concept_id"))
-    empty <- !concepts %in% unique(x$concept_id)
-    if (any(empty)) {
-      x <- dplyr::bind_rows(
-        x,
-        dplyr::tibble(
-          result_id = 1L,
-          strata_name = "overall",
-          strata_level = "overall",
-          variable_level = NA_character_,
-          estimate_name = "count",
-          estimate_type = "integer",
-          estimate_value = "0",
-          concept_id = concepts[empty]
-        ) |>
-          dplyr::inner_join(
-            newSet|>
-              dplyr::mutate(concept_id = as.character(.data$concept_id)) |>
-              dplyr::select(dplyr::all_of(c("concept_name", "concept_id", "codelist_name"))),
-            by = "concept_id"
-          ) |>
-          omopgenerics::uniteGroup(cols = c("codelist_name", "concept_name")) |>
-          dplyr::cross_join(dplyr::tibble(variable_name = c("number records", "number subjects")))
-      )
-    }
-  } else {
-    # fill 0 counts
-    codelists <- as.character(newSet |> dplyr::pull("codelist_name"))
-    empty <- !codelists %in% unique(x$group_level)
-    if (any(empty)) {
-      x <- dplyr::bind_rows(
-        x,
-        dplyr::tibble(
-          result_id = 1L,
-          group_name = "codelist_name",
-          group_level = codelists[empty],
-          strata_name = "overall",
-          strata_level = "overall",
-          variable_level = NA_character_,
-          estimate_name = "count",
-          estimate_type = "integer",
-          estimate_value = "0",
-        ) |>
-          dplyr::cross_join(dplyr::tibble(variable_name = c("number records", "number subjects")))
-      )
-    }
+  # fill codelist 0 counts
+  codelists <- as.character(newSet |> dplyr::pull("codelist_name"))
+  empty <- !codelists %in% unique(x$group_level)
+  if (any(empty)) {
+    x <- dplyr::bind_rows(
+      x,
+      dplyr::tibble(
+        result_id = 1L,
+        group_name = "codelist_name",
+        group_level = codelists[empty],
+        strata_name = "overall",
+        strata_level = "overall",
+        variable_level = NA_character_,
+        estimate_name = "count",
+        estimate_type = "integer",
+        estimate_value = "0",
+      ) |>
+        dplyr::cross_join(dplyr::tibble(variable_name = c("number records", "number subjects")))
+    )
   }
   # to summarise result
   x <- x |>
@@ -431,7 +398,7 @@ transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timing
       cdm_name = omopgenerics::cdmName(cdm),
       cohort_table = cohortName
     ) |>
-    omopgenerics::uniteAdditional(cols = c("concept_id"[byConcept], cohortTable)) |>
+    omopgenerics::uniteAdditional(cols = c(cohortTable)) |>
     dplyr::select(omopgenerics::resultColumns()) |>
     updateSummarisedResultSettings(resultType = "measurement_records", installedVersion, timingName, cohortTable)
 
@@ -532,8 +499,8 @@ addStrata <- function(x, bySex, byYear, ageGroup, name) {
   }
 
   if (byYear) {
-    x <- x |>
-      dplyr::mutate(year = lubridate::year(.data$cohort_start_date)) |>
+    x <- x %>%
+      dplyr::mutate(year = !!CDMConnector::datepart("cohort_start_date", "year")) |>
       dplyr::compute(name = name, temporary = FALSE)
   }
 
