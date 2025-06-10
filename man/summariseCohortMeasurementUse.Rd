@@ -4,7 +4,16 @@
 \alias{summariseCohortMeasurementUse}
 \title{Diagnostics of a codelist of measurement codes within a cohort}
 \usage{
-summariseCohortMeasurementUse(codes, cohort, timing = "during")
+summariseCohortMeasurementUse(
+  codes,
+  cohort,
+  timing = "during",
+  byConcept = TRUE,
+  byYear = FALSE,
+  bySex = FALSE,
+  ageGroup = NULL,
+  dateRange = as.Date(c(NA, NA))
+)
 }
 \arguments{
 \item{codes}{A codelist of measurement codes for which to perform diagnostics.}
@@ -17,6 +26,17 @@ recorded any time, 2) "during", if interested in measurements while the
 subject is in the cohort (or in observation if cohort = NULL), and 3)
 "cohort_start_date" for measurements ocurring at cohort start date (or at
 "observation_period_start_date if cohort = NULL).}
+
+\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by concept.}
+
+\item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
+
+\item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
+
+\item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
+
+\item{dateRange}{Two dates. The first indicating the earliest measurement
+date and the second indicating the latest possible measurement date.}
 }
 \value{
 A summarised result

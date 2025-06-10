@@ -11,6 +11,7 @@ Imports:
     CohortConstructor,
     DBI,
     dplyr,
+    lubridate,
     magrittr,
     omopgenerics,
     PatientProfiles,

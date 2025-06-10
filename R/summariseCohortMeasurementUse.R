@@ -8,6 +8,12 @@
 #' subject is in the cohort (or in observation if cohort = NULL), and 3)
 #' "cohort_start_date" for measurements ocurring at cohort start date (or at
 #' "observation_period_start_date if cohort = NULL).
+#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by concept.
+#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
+#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
+#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param dateRange Two dates. The first indicating the earliest measurement
+#' date and the second indicating the latest possible measurement date.
 #'
 #' @return A summarised result
 #' @export
@@ -28,7 +34,12 @@
 #'
 summariseCohortMeasurementUse <- function(codes,
                                          cohort,
-                                         timing = "during") {
+                                         timing = "during",
+                                         byConcept = TRUE,
+                                         byYear = FALSE,
+                                         bySex = FALSE,
+                                         ageGroup = NULL,
+                                         dateRange = as.Date(c(NA, NA))) {
 
   # check inputs
   timing <- omopgenerics::assertChoice(timing, choices = c("any", "during", "cohort_start_date"))
@@ -41,7 +52,12 @@ summariseCohortMeasurementUse <- function(codes,
     codes = codes,
     cohort = cohort,
     timing = timing,
-    timingName = timing
+    timingName = timing,
+    byConcept = byConcept,
+    byYear = byYear,
+    bySex = bySex,
+    ageGroup = ageGroup,
+    dateRange = dateRange
   )
 
   return(result)

@@ -11,7 +11,7 @@ test_that("summariseCohortMeasurementUse works", {
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name &&& concept_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
-      strata = c(rep("sex &&& age_group", 3)),
+      strata = c(rep("", 3)),
       additional = c("concept_id &&& cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),
       min_cell_count = "0",
       timing = "any"
@@ -172,4 +172,72 @@ test_that("test timings with eunomia", {
       sort(),
     c("1", "100")
   )
+})
+
+test_that("summariseCohortMeasurementUse straifications work", {
+  skip_on_cran()
+  # without cohort
+  cdm <- mockMeasurementDiagnostics()
+  res <- summariseCohortMeasurementUse(
+    cohort = cdm$my_cohort,
+    codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+    bySex = TRUE,
+    byYear = TRUE,
+    ageGroup = NULL,
+    dateRange = as.Date(c("2000-01-01", "2010-01-01"))
+  )
+  expect_equal(
+    res$strata_level |> unique(), c("overall", "Female", "Male", "2000", "2006", "2007", "2009")
+  )
+  expect_equal(
+    res |>
+      dplyr::filter(result_id == 3, estimate_name == "count", strata_name == "year") |>
+      dplyr::pull(estimate_value) |>
+      sort(),
+    c("1", "1", "1", "1", "2", "2", "3", "3", "6")
+  )
+  expect_equal(
+    omopgenerics::settings(res),
+    dplyr::tibble(
+      result_id = 1:3L,
+      result_type = c("measurement_records", "measurement_value_as_numeric", "measurement_value_as_concept"),
+      package_name = "MeasurementDiagnostics",
+      package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
+      group = c("codelist_name &&& concept_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
+      strata = c(rep("sex &&& year", 3)),
+      additional = c("concept_id &&& cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),
+      min_cell_count = "0",
+      timing = "during"
+    )
+  )
+
+  res <- summariseCohortMeasurementUse(
+    cohort = cdm$my_cohort,
+    codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+    byConcept = FALSE,
+    bySex = FALSE,
+    byYear = FALSE,
+    ageGroup = NULL
+  )
+  expect_equal(
+    omopgenerics::settings(res),
+    dplyr::tibble(
+      result_id = 1:3L,
+      result_type = c("measurement_records", "measurement_value_as_numeric", "measurement_value_as_concept"),
+      package_name = "MeasurementDiagnostics",
+      package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
+      group = c("codelist_name", "codelist_name &&& unit_concept_name", "codelist_name"),
+      strata = c(rep("", 3)),
+      additional = c("cohort_table", "unit_concept_id &&& cohort_table", "value_as_concept_id &&& cohort_table"),
+      min_cell_count = "0",
+      timing = "during"
+    )
+  )
+  expect_equal(
+    res |>
+      dplyr::filter(group_level == "test3") |>
+      dplyr::pull("estimate_value"),
+    c("0", "0")
+  )
+
 })
