@@ -23,3 +23,31 @@ NULL
 #' @keywords internal
 NULL
 
+#' Helper for consistent documentation of `plot`.
+#'
+#' @param facet Columns to facet by. See options with
+#' `availablePlotColumns(result)`. Formula is also allowed to specify rows and
+#' columns.
+#' @param colour Columns to color by. See options with
+#' `availablePlotColumns(result)`.
+#'
+#' @name plotDoc
+#' @keywords internal
+NULL
+
+#' Helper for consistent documentation of `uniqueCombinations`.
+#'
+#' @param uniqueCombinations Whether to restrict to unique reference and
+#' comparator comparisons.
+#'
+#' @name uniqueCombinationsDoc
+#' @keywords internal
+NULL
+
+#' Helper for consistent documentation of `timeScale`.
+#'
+#' @param timeScale Time scale to show, it can be "days" or "years".
+#'
+#' @name timeScaleDoc
+#' @keywords internal
+NULL
