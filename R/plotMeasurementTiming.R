@@ -24,11 +24,11 @@
 #' cdmDisconnect(cdm)
 #' }
 plotMeasurementTimings <- function(result,
-                             x = "concept_id",
-                             plotType = "boxplot",
-                             timeScale = "days",
-                             facet = visOmopResults::strataColumns(result),
-                             colour = "cdm_name") {
+                                   x = "codelist_name",
+                                   plotType = "boxplot",
+                                   timeScale = "days",
+                                   facet = visOmopResults::strataColumns(result),
+                                   colour = "cdm_name") {
   # specific checks
   # omopgenerics::assertChoice(x, c("concept_name", "concept_id"), length = 1)
   omopgenerics::assertChoice(plotType, c("boxplot", "densityplot"), length = 1)
@@ -62,15 +62,15 @@ plotMeasurementTimings <- function(result,
   }
 
   p <- visOmopResults::boxPlot(result,
-                          x = x,
-                          lower = "q25",
-                          middle = "median",
-                          upper  = "q75",
-                          ymin = "min",
-                          ymax = "max",
-                          facet  = facet,
-                          colour = colour,
-                          label = character()) +
+                               x = x,
+                               lower = "q25",
+                               middle = "median",
+                               upper  = "q75",
+                               ymin = "min",
+                               ymax = "max",
+                               facet  = facet,
+                               colour = colour,
+                               label = character()) +
     ggplot2::labs(
       title = ggplot2::element_blank(),
       y = lab,
