@@ -2,6 +2,7 @@
 
 export("%>%")
 export(mockMeasurementDiagnostics)
+export(plotMeasurementTimings)
 export(summariseCohortMeasurementUse)
 export(summariseMeasurementUse)
 export(tableMeasurementTimings)
