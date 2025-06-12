@@ -4,12 +4,31 @@
 \alias{summariseMeasurementUse}
 \title{Diagnostics of a codelist of measurement codes in the database}
 \usage{
-summariseMeasurementUse(cdm, codes)
+summariseMeasurementUse(
+  cdm,
+  codes,
+  byConcept = TRUE,
+  byYear = FALSE,
+  bySex = FALSE,
+  ageGroup = NULL,
+  dateRange = as.Date(c(NA, NA))
+)
 }
 \arguments{
 \item{cdm}{A reference to the cdm object.}
 
 \item{codes}{A codelist of measurement codes for which to perform diagnostics.}
+
+\item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by concept.}
+
+\item{byYear}{TRUE or FALSE. If TRUE code use will be summarised by year.}
+
+\item{bySex}{TRUE or FALSE. If TRUE code use will be summarised by sex.}
+
+\item{ageGroup}{If not NULL, a list of ageGroup vectors of length two.}
+
+\item{dateRange}{Two dates. The first indicating the earliest measurement
+date and the second indicating the latest possible measurement date.}
 }
 \value{
 A summarised result

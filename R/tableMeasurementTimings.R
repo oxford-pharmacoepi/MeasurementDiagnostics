@@ -40,7 +40,7 @@ tableMeasurementTimings <- function(result,
       header = header,
       groupColumn = groupColumn,
       hide = hide,
-      rename = c("CDM name" = "cdm_name", "Concept ID" = "concept_id"),
+      rename = c("CDM name" = "cdm_name"),
       modifyResults = \(x, ...) {
         x |>
           dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
@@ -115,8 +115,8 @@ tableInternal <- function(result,
     )) |>
     omopgenerics::splitAll() |>
     dplyr::select(!c("result_id", "min_cell_count")) |>
-    dplyr::relocate("concept_id", .after = "concept_name") |>
-    dplyr::relocate(dplyr::any_of("timing"), .after = "concept_id") |>
+    # dplyr::relocate("concept_id", .after = "concept_name") |>
+    # dplyr::relocate(dplyr::any_of("timing"), .after = "concept_id") |>
     visOmopResults::visTable(
       estimateName = estimateName,
       header = header,

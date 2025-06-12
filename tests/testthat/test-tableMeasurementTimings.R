@@ -13,7 +13,7 @@ test_that("check that it works ", {
                                                hide = c("variable_name", "variable_level", "cohort_table"),
                                                .options = list()))
   expect_true("gt_tbl" %in% class(x))
-  expect_true(all(c("Codelist name", "CDM name", "Concept name", "Concept ID", "Estimate name") %in% colnames(x$`_data`)))
+  expect_true(all(c("Codelist name", "CDM name", "Estimate name", "Estimate value") %in% colnames(x$`_data`)))
 
   expect_no_error(x <- tableMeasurementTimings(result, type = "flextable"))
   expect_true("flextable" %in% class(x))
@@ -37,7 +37,7 @@ test_that("check that it works ", {
   ))
 
   # Summarise cohort measurement use ----
-  result <- summariseCohortMeasurementUse(cohort = cdm$my_cohort,
+  result <- summariseCohortMeasurementUse(cohort = cdm$my_cohort, bySex = TRUE,
                                           codes = list("test_codelist" = c(3001467L, 45875977L)))
   expect_no_error(x <- tableMeasurementTimings(result,
                                                type = "gt",
@@ -46,7 +46,12 @@ test_that("check that it works ", {
                                                hide = c("variable_name", "variable_level", "cohort_table"),
                                                .options = list()))
 
-  expect_true(all(c("Codelist name", "CDM name", "Concept name", "Concept ID", "Timing", "Estimate name") %in% colnames(x$`_data`)))
+  expect_true(all(
+    c('Codelist name', 'CDM name', 'Variable name', 'Estimate name',
+      'Timing', '[header_name]Sex\n[header_level]overall',
+      '[header_name]Sex\n[header_level]Female',
+      '[header_name]Sex\n[header_level]Male') %in%
+      colnames(x$`_data`)))
 
   CDMConnector::cdmDisconnect(cdm = cdm)
 })
