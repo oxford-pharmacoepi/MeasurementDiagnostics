@@ -44,6 +44,7 @@ test_that("check that it works ", {
                                                type = "gt",
                                                header = c(visOmopResults::strataColumns(result)),
                                                groupColumn = c("codelist_name"),
+                                               settingsColumn = "timing",
                                                hide = c("variable_level", "cohort_table"),
                                                .options = list()))
 

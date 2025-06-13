@@ -1,5 +1,6 @@
 test_that("table works", {
-  cdm <- mockMeasurementDiagnostics(seed = 654)
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
 
   # Summarise measurement use ----
   result <- summariseMeasurementUse(cdm = cdm,
@@ -42,7 +43,7 @@ test_that("table works", {
   expect_true(all(
     c('Codelist name', 'CDM name', 'Concept name', 'Concept ID', 'Unit concept name',
       'Unit concept ID', 'Variable name', 'Estimate name', '[header_name]Sex\n[header_level]overall',
-      '[header_name]Sex\n[header_level]Female', '[header_name]Sex\n[header_level]Male') %in%
+      '[header_name]Sex\n[header_level]Male') %in%
       colnames(x$`_data`)))
 
   expect_no_error(x <- tableMeasurementValueAsNumeric(result, settingsColumn = "timing"))
