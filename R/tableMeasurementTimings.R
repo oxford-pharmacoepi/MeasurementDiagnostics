@@ -37,10 +37,10 @@ tableMeasurementTimings <- function(result,
 
   # subset to rows of interest
   result <- result |>
-    omopgenerics::filterSettings(.data$result_type == "measurement_records")
+    omopgenerics::filterSettings(.data$result_type == "measurement_timings")
 
   if (nrow(result) == 0) {
-    cli::cli_warn("There are no results with `result_type = measurement_records`")
+    cli::cli_warn("There are no results with `result_type = measurement_timings`")
     return(visOmopResults::emptyTable(type = type))
   }
 
@@ -87,76 +87,6 @@ tableMeasurementTimings <- function(result,
     )
 }
 
-tableInternal1 <- function(result,
-                          resultType,
-                          header,
-                          groupColumn,
-                          hide,
-                          rename,
-                          modifyResults,
-                          estimateName,
-                          type,
-                          .options = list(),
-                          call = parent.frame()) {
-
-  rlang::check_installed("visOmopResults")
-
-  # check inputs
-  result <- omopgenerics::validateResultArgument(result, call = call)
-
-  # subset to rows of interest
-  result <- result |>
-    omopgenerics::filterSettings(.data$result_type == .env$resultType)
-
-  if (nrow(result) == 0) {
-    cli::cli_warn("There are no results with `result_type = {resultType}`")
-    return(visOmopResults::emptyTable(type = type))
-  }
-
-  checkVersion(result)
-
-  set <- omopgenerics::settings(result)
-  if (is.function(modifyResults)) {
-    result <- do.call(modifyResults, list(x = result, call = call))
-  }
-
-  # settings columns
-  ignore <- c(
-    "result_id", "result_type", "package_name", "package_version", "group",
-    "strata", "additional"
-  )
-  setColumns <- set |>
-    dplyr::filter(.data$result_id %in% unique(.env$result$result_id)) |>
-    purrr::map(\(x) x[!is.na(x)]) |>
-    purrr::compact() |>
-    names() |>
-    purrr::discard(\(x) x %in% ignore)
-
-  result |>
-    dplyr::left_join(
-      set |>
-        dplyr::select("result_id", dplyr::all_of(setColumns)),
-      by = "result_id"
-    ) |>
-    dplyr::mutate(estimate_value = dplyr::if_else(
-      stringr::str_detect(.data$estimate_name, "count") & .data$estimate_value == "-",
-      paste0("<", as.character(.data$min_cell_count)),
-      .data$estimate_value
-    )) |>
-    omopgenerics::splitAll() |>
-    dplyr::select(!c("result_id", "min_cell_count")) |>
-    # dplyr::relocate("concept_id", .after = "concept_name") |>
-    # dplyr::relocate(dplyr::any_of("timing"), .after = "concept_id") |>
-    visOmopResults::visTable(
-      estimateName = estimateName,
-      header = header,
-      rename = rename,
-      type = type,
-      hide = c("estimate_type", hide),
-      groupColumn = groupColumn,
-      .options = .options
-    )
-}
 
 checkVersion <- function(result) {
   pkg <- "MeasurementDiagnostics"

@@ -28,7 +28,10 @@ Suggests:
     testthat,
     ggplot2,
     gt,
-    flextable
+    flextable,
+    RPostgres,
+    lubridate,
+    odbc
 Depends: 
     R (>= 4.1)
 License: Apache License (>= 2)
