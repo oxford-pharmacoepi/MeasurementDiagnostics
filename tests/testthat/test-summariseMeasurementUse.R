@@ -12,7 +12,7 @@ test_that("summariseMeasurementUse works", {
     omopgenerics::settings(res),
     dplyr::tibble(
       result_id = 1:3L,
-      result_type = c("measurement_records", "measurement_value_as_numeric", "measurement_value_as_concept"),
+      result_type = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept"),
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
@@ -24,7 +24,7 @@ test_that("summariseMeasurementUse works", {
 
   expect_equal(
     res |>
-      omopgenerics::filterSettings(result_type == "measurement_records") |>
+      omopgenerics::filterSettings(result_type == "measurement_timings") |>
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
@@ -32,7 +32,7 @@ test_that("summariseMeasurementUse works", {
   )
   expect_equal(
     res |>
-      omopgenerics::filterSettings(result_type == "measurement_records") |>
+      omopgenerics::filterSettings(result_type == "measurement_timings") |>
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(variable_name) |>
       sort(),
@@ -40,7 +40,7 @@ test_that("summariseMeasurementUse works", {
   )
   expect_equal(
     res |>
-      omopgenerics::filterSettings(result_type == "measurement_records") |>
+      omopgenerics::filterSettings(result_type == "measurement_timings") |>
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_name) |>
       sort(),
@@ -137,7 +137,7 @@ test_that("summariseMeasurementUse straifications work", {
     omopgenerics::settings(res),
     dplyr::tibble(
       result_id = 1:3L,
-      result_type = c("measurement_records", "measurement_value_as_numeric", "measurement_value_as_concept"),
+      result_type = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept"),
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& unit_concept_name", "codelist_name"),
@@ -191,4 +191,52 @@ test_that("summariseMeasurementUse expected fails", {
     ageGroup = NULL,
     dateRange = c(0, as.Date("2005-01-01"))
   ))
+  expect_error(summariseMeasurementUse(
+    cdm = cdm,
+    codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+    bySex = TRUE,
+    byYear = TRUE,
+    ageGroup = NULL,
+    checks = "measurement_records"
+  ))
+})
+
+
+test_that("summariseMeasurementUse checks", {
+  skip_on_cran()
+  cdm <- mockMeasurementDiagnostics()
+  res <- summariseMeasurementUse(
+    cdm = cdm,
+    codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+    bySex = FALSE,
+    byYear = FALSE,
+    ageGroup = NULL,
+    dateRange = as.Date(c("2000-01-01", "2005-01-01")),
+    checks = "measurement_timings"
+  )
+  expect_true(unique(res$result_id) == 1)
+  expect_true(omopgenerics::settings(res)$result_type == "measurement_timings")
+
+  res <- summariseMeasurementUse(
+    cdm = cdm,
+    codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+    bySex = FALSE,
+    byYear = FALSE,
+    ageGroup = NULL,
+    dateRange = as.Date(c("2000-01-01", "2005-01-01")),
+    checks = c("measurement_value_as_numeric", "measurement_value_as_concept")
+  )
+  expect_true(all(omopgenerics::settings(res)$result_type %in% c("measurement_value_as_numeric", "measurement_value_as_concept")))
+
+  expect_null(
+    summariseMeasurementUse(
+      cdm = cdm,
+      codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
+      bySex = FALSE,
+      byYear = FALSE,
+      ageGroup = NULL,
+      dateRange = as.Date(c("2000-01-01", "2005-01-01")),
+      checks = character()
+    )
+  )
 })

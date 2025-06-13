@@ -36,7 +36,7 @@ tableMeasurementTimings <- function(result,
 
   result |>
     tableInternal(
-      resultType = "measurement_records",
+      resultType = "measurement_timings",
       header = header,
       groupColumn = groupColumn,
       hide = hide,

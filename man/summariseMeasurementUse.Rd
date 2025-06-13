@@ -11,7 +11,9 @@ summariseMeasurementUse(
   byYear = FALSE,
   bySex = FALSE,
   ageGroup = NULL,
-  dateRange = as.Date(c(NA, NA))
+  dateRange = as.Date(c(NA, NA)),
+  checks = c("measurement_timings", "measurement_value_as_numeric",
+    "measurement_value_as_concept")
 )
 }
 \arguments{
@@ -29,6 +31,9 @@ summariseMeasurementUse(
 
 \item{dateRange}{Two dates. The first indicating the earliest measurement
 date and the second indicating the latest possible measurement date.}
+
+\item{checks}{Diagnostics to run. Options are: "measurement_timing",
+"measurement_value_as_numeric", and "measurement_value_as_concept".}
 }
 \value{
 A summarised result

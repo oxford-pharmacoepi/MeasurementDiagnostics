@@ -38,11 +38,11 @@ plotMeasurementTimings <- function(result,
 
   # pre process
   result <- result |>
-    omopgenerics::filterSettings(.data$result_type == "measurement_records") |>
+    omopgenerics::filterSettings(.data$result_type == "measurement_timings") |>
     dplyr::filter(.data$variable_name == "time")
 
   if (nrow(result) == 0) {
-    mes <- cli::cli_warn("No results found with `result_type == 'measurement_records'`")
+    mes <- cli::cli_warn("No results found with `result_type == 'measurement_timings'`")
     return(emptyPlot(mes))
   }
 

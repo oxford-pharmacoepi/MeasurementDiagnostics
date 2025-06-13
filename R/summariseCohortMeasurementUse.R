@@ -14,6 +14,8 @@
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
 #' @param dateRange Two dates. The first indicating the earliest measurement
 #' date and the second indicating the latest possible measurement date.
+#' @param checks Diagnostics to run. Options are: "measurement_timing",
+#' "measurement_value_as_numeric", and "measurement_value_as_concept".
 #'
 #' @return A summarised result
 #' @export
@@ -33,13 +35,14 @@
 #' }
 #'
 summariseCohortMeasurementUse <- function(codes,
-                                         cohort,
-                                         timing = "during",
-                                         byConcept = TRUE,
-                                         byYear = FALSE,
-                                         bySex = FALSE,
-                                         ageGroup = NULL,
-                                         dateRange = as.Date(c(NA, NA))) {
+                                          cohort,
+                                          timing = "during",
+                                          byConcept = TRUE,
+                                          byYear = FALSE,
+                                          bySex = FALSE,
+                                          ageGroup = NULL,
+                                          dateRange = as.Date(c(NA, NA)),
+                                          checks = c("measurement_timing", "measurement_value_as_numeric", "measurement_value_as_concept")) {
 
   # check inputs
   timing <- omopgenerics::assertChoice(timing, choices = c("any", "during", "cohort_start_date"))
@@ -57,7 +60,8 @@ summariseCohortMeasurementUse <- function(codes,
     byYear = byYear,
     bySex = bySex,
     ageGroup = ageGroup,
-    dateRange = dateRange
+    dateRange = dateRange,
+    checks = checks
   )
 
   return(result)

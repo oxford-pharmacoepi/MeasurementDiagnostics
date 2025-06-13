@@ -8,6 +8,8 @@
 #' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
 #' @param dateRange Two dates. The first indicating the earliest measurement
 #' date and the second indicating the latest possible measurement date.
+#' @param checks Diagnostics to run. Options are: "measurement_timing",
+#' "measurement_value_as_numeric", and "measurement_value_as_concept".
 #'
 #' @return A summarised result
 #' @export
@@ -31,7 +33,8 @@ summariseMeasurementUse <- function(cdm,
                                     byYear = FALSE,
                                     bySex = FALSE,
                                     ageGroup = NULL,
-                                    dateRange = as.Date(c(NA, NA))) {
+                                    dateRange = as.Date(c(NA, NA)),
+                                    checks = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept")) {
   # check inputs
   cdm <- omopgenerics::validateCdmArgument(cdm)
   codes <- omopgenerics::validateConceptSetArgument(codes)
@@ -47,7 +50,8 @@ summariseMeasurementUse <- function(cdm,
     byYear = byYear,
     bySex = bySex,
     ageGroup = ageGroup,
-    dateRange = dateRange
+    dateRange = dateRange,
+    checks = checks
   )
 
   return(result)
@@ -63,18 +67,24 @@ summariseMeasurementUseInternal <- function(cdm,
                                             byYear,
                                             bySex,
                                             ageGroup,
-                                            dateRange) {
+                                            dateRange,
+                                            checks) {
   # checks
   ageGroup <- omopgenerics::validateAgeGroupArgument(ageGroup = ageGroup)
   omopgenerics::assertLogical(byConcept, length = 1)
   omopgenerics::assertLogical(byYear, length = 1)
   omopgenerics::assertLogical(bySex, length = 1)
   omopgenerics::assertDate(dateRange, length = 2, na = TRUE)
+  omopgenerics::assertChoice(
+    checks, choices = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept")
+  )
   if (all(!is.na(dateRange))) {
     if (dateRange[1] > dateRange[2]) {
       cli::cli_abort("First date component in `dateRange` must be smaller than the second.")
     }
   }
+
+  if (length(checks) == 0) return(NULL)
 
   prefix <- omopgenerics::tmpPrefix()
 
@@ -153,54 +163,63 @@ summariseMeasurementUseInternal <- function(cdm,
   measurement <- measurement |> addStrata(bySex, byYear, ageGroup, measurementCohortName)
 
   ## measurements per subject
-  cli::cli_inform(c(">" = "Getting time between records per person."))
-  measurementTiming <- measurement |>
-    dplyr::group_by(.data$codelist_name, .data$subject_id) |>
-    dplyr::arrange(.data$cohort_start_date) |>
-    dplyr::mutate(previous_measurement = dplyr::lag(.data$cohort_start_date)) %>%
-    dplyr::mutate(time = !!CDMConnector::datediff("previous_measurement", "cohort_start_date")) |>
-    dplyr::ungroup() |>
-    dplyr::collect() |>
-    PatientProfiles::summariseResult(
-      group = list("codelist_name"),
-      includeOverallGroup = FALSE,
-      strata = strata,
-      includeOverallStrata = TRUE,
-      variables = "time",
-      estimates = c("min", "q25", "median", "q75", "max"),
-      counts = TRUE
-    ) |>
-    suppressMessages() |>
-    transformMeasurementRecords(
-      cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
-      installedVersion, timingName, cohortName
-    )
+  if ("measurement_timings" %in% checks) {
+    cli::cli_inform(c(">" = "Getting time between records per person."))
+    measurementTiming <- measurement |>
+      dplyr::group_by(.data$codelist_name, .data$subject_id) |>
+      dplyr::arrange(.data$cohort_start_date) |>
+      dplyr::mutate(previous_measurement = dplyr::lag(.data$cohort_start_date)) %>%
+      dplyr::mutate(time = !!CDMConnector::datediff("previous_measurement", "cohort_start_date")) |>
+      dplyr::ungroup() |>
+      dplyr::collect() |>
+      PatientProfiles::summariseResult(
+        group = list("codelist_name"),
+        includeOverallGroup = FALSE,
+        strata = strata,
+        includeOverallStrata = TRUE,
+        variables = "time",
+        estimates = c("min", "q25", "median", "q75", "max"),
+        counts = TRUE
+      ) |>
+      suppressMessages() |>
+      transformMeasurementRecords(
+        cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
+        installedVersion, timingName, cohortName
+      )
+  } else {
+    measurementTiming <- NULL
+  }
 
   ## measurement value
-  cli::cli_inform(c(">" = "Summarising measurement results - value as number."))
-  # as numeric
-  # 1) summarise numeric distribution
-  measurementNumeric <- measurement |>
-    dplyr::select(!"value_as_concept_id") |>
-    dplyr::collect() |>
-    PatientProfiles::summariseResult(
-      group = list(c("codelist_name", "unit_concept_id"), c("codelist_name", "concept_id", "unit_concept_id"))[c(TRUE, byConcept)],
-      includeOverallGroup = FALSE,
-      strata = strata,
-      includeOverallStrata = TRUE,
-      variables = "value_as_number",
-      estimates = c("min", "q25", "median", "q75", "max", "count_missing", "percentage_missing"),
-      counts = TRUE,
-      weights = NULL
-    ) |>
-    suppressMessages() |>
-    transformMeasurementValue(
-      cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
-      cohortName = cohortName, installedVersion = installedVersion,
-      timing = timingName, byConcept = byConcept
-    )
+  if ("measurement_value_as_numeric" %in% checks) {
+    cli::cli_inform(c(">" = "Summarising measurement results - value as number."))
+    # as numeric
+    # 1) summarise numeric distribution
+    measurementNumeric <- measurement |>
+      dplyr::select(!"value_as_concept_id") |>
+      dplyr::collect() |>
+      PatientProfiles::summariseResult(
+        group = list(c("codelist_name", "unit_concept_id"), c("codelist_name", "concept_id", "unit_concept_id"))[c(TRUE, byConcept)],
+        includeOverallGroup = FALSE,
+        strata = strata,
+        includeOverallStrata = TRUE,
+        variables = "value_as_number",
+        estimates = c("min", "q25", "median", "q75", "max", "count_missing", "percentage_missing"),
+        counts = TRUE,
+        weights = NULL
+      ) |>
+      suppressMessages() |>
+      transformMeasurementValue(
+        cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
+        cohortName = cohortName, installedVersion = installedVersion,
+        timing = timingName, byConcept = byConcept
+      )
+  } else {
+    measurementNumeric <- NULL
+  }
 
-  # counts as concept
+  ## counts as concept
+  if ("measurement_value_as_concept" %in% checks) {
   cli::cli_inform(c(">" = "Summarising measurement results - value as concept."))
   measurementConcept <- measurement |>
     dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
@@ -220,6 +239,9 @@ summariseMeasurementUseInternal <- function(cdm,
       cohortName = cohortName, installedVersion = installedVersion,
       timing = timingName, byConcept = byConcept
     )
+  } else {
+    measurementConcept <- NULL
+  }
 
   cli::cli_inform(c(">" = "Binding all diagnostic results."))
   omopgenerics::dropSourceTable(cdm = cdm, name = dplyr::starts_with(prefix))
@@ -400,7 +422,7 @@ transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timing
     ) |>
     omopgenerics::uniteAdditional(cols = c(cohortTable)) |>
     dplyr::select(omopgenerics::resultColumns()) |>
-    updateSummarisedResultSettings(resultType = "measurement_records", installedVersion, timingName, cohortTable)
+    updateSummarisedResultSettings(resultType = "measurement_timings", installedVersion, timingName, cohortTable)
 
   return(x)
 }
