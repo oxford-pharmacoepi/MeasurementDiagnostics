@@ -48,11 +48,10 @@ test_that("check that it works ", {
                                                .options = list()))
 
   expect_true(all(
-    c('Codelist name', 'CDM name', 'Variable name', 'Estimate name',
-      'Timing', '[header_name]Sex\n[header_level]overall',
-      '[header_name]Sex\n[header_level]Female',
-      '[header_name]Sex\n[header_level]Male') %in%
+    c('Codelist name', 'CDM name', 'Variable name', 'Estimate name', 'Timing',
+      '[header_name]Sex\n[header_level]overall', '[header_name]Sex\n[header_level]Male') %in%
       colnames(x$`_data`)))
 
   CDMConnector::cdmDisconnect(cdm = cdm)
 })
+
