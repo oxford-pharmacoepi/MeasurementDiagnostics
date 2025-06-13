@@ -13,7 +13,7 @@ summariseCohortMeasurementUse(
   bySex = FALSE,
   ageGroup = NULL,
   dateRange = as.Date(c(NA, NA)),
-  checks = c("measurement_timing", "measurement_value_as_numeric",
+  checks = c("measurement_timings", "measurement_value_as_numeric",
     "measurement_value_as_concept")
 )
 }
