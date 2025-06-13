@@ -1,6 +1,7 @@
 test_that("check that it works ", {
 
-  cdm <- mockMeasurementDiagnostics(seed = 654)
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
 
   # Summarise measurement use ----
   result <- summariseMeasurementUse(cdm = cdm,

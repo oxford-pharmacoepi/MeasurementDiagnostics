@@ -1,7 +1,7 @@
 test_that("summariseCohortMeasurementUse works", {
   skip_on_cran()
-  # with cohort
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseCohortMeasurementUse(codes = list("test" = 3001467L), cohort = cdm$my_cohort, timing = "any")
   expect_equal(
     omopgenerics::settings(res),
@@ -23,7 +23,7 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    as.character(c("0", "104.5", "1207", "22.5", "301", "59", "83"))
+    as.character(c("1498", "21", "2332", "28", "4338.5", "5026", "96"))
   )
   expect_equal(
     res |>
@@ -47,13 +47,13 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c('10.5490245122561', '10.5490245122561', '12.1085542771386', '12.1085542771386',
-      '12.1810905452726', '12.1810905452726', '2', '2', '3', '3', '39', '39',
-      '4.54545454545455', '4.54545454545455', '44', '44', '5.36268134067033',
-      '5.36268134067033', '5.4352176088044', '5.4352176088044', '6.84967483741871',
-      '6.84967483741871', '6.99474737368684', '6.99474737368684', '7.69230769230769',
-      '7.69230769230769', '8.33666833416708', '8.33666833416708', '8.77188594297149',
-      '8.77188594297149', '9.96873436718359', '9.96873436718359')
+    c('0', '0', '0', '0', '108.989898989899', '108.989898989899', '12', '12',
+      '127.29797979798', '127.29797979798', '130.227272727273', '130.227272727273',
+      '147.070707070707', '147.070707070707', '148.535353535354', '148.535353535354',
+      '16', '16', '16.6666666666667', '16.6666666666667', '19.6464646464646',
+      '19.6464646464646', '2', '2', '26.969696969697', '26.969696969697',
+      '60.6565656565657', '60.6565656565657', '65.0505050505051', '65.0505050505051',
+      '79.6969696969697', '79.6969696969697')
   )
   expect_equal(
     res |>
@@ -73,8 +73,8 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c('26', '26', '27', '27', '30', '30', '31.3253012048193', '31.3253012048193',
-      '32.5301204819277', '32.5301204819277', '36.144578313253', '36.144578313253')
+    c('11', '11', '28.5714285714286', '28.5714285714286', '32.1428571428571',
+      '32.1428571428571', '39.2857142857143', '39.2857142857143', '8', '8', '9', '9')
   )
   expect_equal(
     res |>
@@ -184,25 +184,25 @@ test_that("test timings with eunomia", {
 
 test_that("summariseCohortMeasurementUse straifications work", {
   skip_on_cran()
-  # without cohort
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseCohortMeasurementUse(
     cohort = cdm$my_cohort,
     codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
     bySex = TRUE,
     byYear = TRUE,
     ageGroup = NULL,
-    dateRange = as.Date(c("2000-01-01", "2010-01-01"))
+    dateRange = as.Date(c("1995-01-01", "2020-01-01"))
   )
   expect_equal(
-    res$strata_level |> unique(), c("overall", "Female", "Male", "2000", "2006", "2007", "2009")
+    res$strata_level |> unique(), c("overall", "Male", "2015" )
   )
   expect_equal(
     res |>
       dplyr::filter(result_id == 3, estimate_name == "count", strata_name == "year", group_level == "test") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c("1", "1", "1", "1", "2", "2", "3", "3", "6")
+    c("1")
   )
   expect_equal(
     omopgenerics::settings(res),
@@ -251,14 +251,14 @@ test_that("summariseCohortMeasurementUse straifications work", {
 
 test_that("summariseMeasurementUse checks", {
   skip_on_cran()
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseCohortMeasurementUse(
     cohort = cdm$my_cohort,
     codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
     bySex = FALSE,
     byYear = FALSE,
     ageGroup = NULL,
-    dateRange = as.Date(c("2000-01-01", "2005-01-01")),
     checks = "measurement_timings"
   )
   expect_true(unique(res$result_id) == 1)
@@ -270,7 +270,6 @@ test_that("summariseMeasurementUse checks", {
     bySex = FALSE,
     byYear = FALSE,
     ageGroup = NULL,
-    dateRange = as.Date(c("2000-01-01", "2005-01-01")),
     checks = c("measurement_value_as_numeric", "measurement_value_as_concept")
   )
   expect_true(all(omopgenerics::settings(res)$result_type %in% c("measurement_value_as_numeric", "measurement_value_as_concept")))

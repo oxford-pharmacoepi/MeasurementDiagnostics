@@ -1,7 +1,7 @@
 test_that("summariseMeasurementUse works", {
   skip_on_cran()
-  # without cohort
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseMeasurementUse(
     cdm = cdm,
     codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
@@ -28,7 +28,7 @@ test_that("summariseMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c("0", "0", "0", "100", "1207", "21", "294", "67", "89")
+    c('0', '0', '100', '1426.75', '14973', '3521.5', '5334', '64', '96')
   )
   expect_equal(
     res |>
@@ -52,12 +52,12 @@ test_that("summariseMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c('10.440220110055', '10.440220110055', '10.4764882441221', '10.4764882441221',
-      '12.1085542771386', '12.1085542771386', '12.1810905452726', '12.1810905452726',
-      '2', '2', '3', '3', '4', '4', '5.36268134067033', '5.36268134067033',
-      '5.4352176088044', '5.4352176088044', '50', '50', '50', '50', '6', '6',
-      '7.06728364182091', '7.06728364182091', '7.10355177588794', '7.10355177588794',
-      '8.77188594297149', '8.77188594297149', '8.77188594297149', '8.77188594297149')
+    c('114.848484848485', '114.848484848485', '115.580808080808', '115.580808080808',
+      '12.3232323232323', '12.3232323232323', '13.7878787878788', '13.7878787878788',
+      '148.535353535354', '148.535353535354', '150', '150', '2', '2', '3', '3', '4',
+      '4', '46.7424242424242', '46.7424242424242', '47.4747474747475', '47.4747474747475',
+      '50', '50', '50', '50', '6', '6', '81.1616161616162', '81.1616161616162',
+      '81.1616161616162', '81.1616161616162')
   )
   expect_equal(
     res |>
@@ -90,13 +90,13 @@ test_that("summariseMeasurementUse works", {
 
   # suppress
   resSup <- res |> omopgenerics::suppress(minCellCount = 68)
-  expect_equal(resSup$estimate_value |> unique(), c("100", "-", "0"))
+  expect_equal(resSup$estimate_value |> unique(), c("100", "-", "81", "0"))
 })
 
 test_that("summariseMeasurementUse straifications work", {
   skip_on_cran()
-  # without cohort
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseMeasurementUse(
     cdm = cdm,
     codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),
@@ -106,14 +106,14 @@ test_that("summariseMeasurementUse straifications work", {
     dateRange = as.Date(c("2000-01-01", "2005-01-01"))
   )
   expect_equal(
-    res$strata_level |> unique(), c("overall", "Female", "2000", "2002", "2003")
+    res$strata_level |> unique(), c("overall", "Female", "Male", "2000", "2001", "2002", "2003", "2004")
   )
   expect_equal(
     res |>
       dplyr::filter(strata_level == "2000", result_id == 3, estimate_name == "count") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c("1", "1", "1", "1", "2", "2")
+    c("1", "1", "1", "1")
   )
 
   expect_equal(
@@ -157,7 +157,8 @@ test_that("summariseMeasurementUse straifications work", {
 
 test_that("summariseMeasurementUse expected fails", {
   skip_on_cran()
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
 
   expect_error(summariseMeasurementUse(
     cdm = cdm,
@@ -204,7 +205,8 @@ test_that("summariseMeasurementUse expected fails", {
 
 test_that("summariseMeasurementUse checks", {
   skip_on_cran()
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   res <- summariseMeasurementUse(
     cdm = cdm,
     codes = list("test" = 3001467L, "test2" = 1L, "test3" = 45875977L),

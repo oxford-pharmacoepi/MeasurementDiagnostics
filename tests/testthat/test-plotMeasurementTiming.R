@@ -1,7 +1,7 @@
 test_that("test measurement timing", {
   skip_on_cran()
-
-  cdm <- mockMeasurementDiagnostics()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
   result <- summariseMeasurementUse(
                 cdm = cdm,
                 codes = list("test_codelist" = c(3001467L, 45875977L)))
