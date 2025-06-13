@@ -29,13 +29,8 @@ tableMeasurementTimings <- function(result,
                                     hide = c("variable_name", "variable_level", "cohort_table"),
                                     .options = list()){
 
-  rlang::check_installed("visOmopResults")
-
-  # check inputs
-  result <- omopgenerics::validateResultArgument(result)
-
   result |>
-    tableInternal(
+    tableInternal1(
       resultType = "measurement_records",
       header = header,
       groupColumn = groupColumn,
@@ -46,10 +41,8 @@ tableMeasurementTimings <- function(result,
           dplyr::filter(!.data$estimate_name %in% c("density_x", "density_y"))
       },
       estimateName = c(
-        "N (%)" = "<count> (<percentage>%)",
         "N" = "<count>",
         "Median [Q25 - Q75]" = "<median> [<q25> - <q75>]",
-        "Mean (SD)" = "<mean> (<sd>)",
         "Range" = "<min> to <max>"
       ),
       type = type,
@@ -57,7 +50,7 @@ tableMeasurementTimings <- function(result,
     )
 }
 
-tableInternal <- function(result,
+tableInternal1 <- function(result,
                           resultType,
                           header,
                           groupColumn,
@@ -80,7 +73,7 @@ tableInternal <- function(result,
 
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = {resultType}`")
-    return(emptyTable(type))
+    return(visOmopResults::emptyTable(type = type))
   }
 
   checkVersion(result)
@@ -139,9 +132,4 @@ checkVersion <- function(result) {
       cli::cli_inform()
   }
   invisible()
-}
-
-emptyTable <- function(type){
-  omopgenerics::emptySummarisedResult() |>
-    visOmopResults::visOmopTable(type = type)
 }
