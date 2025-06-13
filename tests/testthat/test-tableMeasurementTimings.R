@@ -43,7 +43,7 @@ test_that("check that it works ", {
                                                type = "gt",
                                                header = c(visOmopResults::strataColumns(result)),
                                                groupColumn = c("codelist_name"),
-                                               hide = c("variable_name", "variable_level", "cohort_table"),
+                                               hide = c("variable_level", "cohort_table"),
                                                .options = list()))
 
   expect_true(all(
