@@ -42,7 +42,7 @@ summariseCohortMeasurementUse <- function(codes,
                                           bySex = FALSE,
                                           ageGroup = NULL,
                                           dateRange = as.Date(c(NA, NA)),
-                                          checks = c("measurement_timing", "measurement_value_as_numeric", "measurement_value_as_concept")) {
+                                          checks = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept")) {
 
   # check inputs
   timing <- omopgenerics::assertChoice(timing, choices = c("any", "during", "cohort_start_date"))
