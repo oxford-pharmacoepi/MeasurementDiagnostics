@@ -15,8 +15,7 @@ Imports:
     omopgenerics,
     PatientProfiles,
     purrr,
-    rlang,
-    stringr
+    rlang
 Suggests: 
     CDMConnector,
     CodelistGenerator,

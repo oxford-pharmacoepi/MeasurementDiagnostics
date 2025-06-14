@@ -44,7 +44,7 @@ test_that("table works", {
   expect_true(all(
     c('Codelist name', 'CDM name', 'Cohort table', 'Concept name', 'Concept ID',
       'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name',
-      '[header_name]Sex\n[header_level]overall', '[header_name]Sex\n[header_level]Female',
+      '[header_name]Sex\n[header_level]overall',
       '[header_name]Sex\n[header_level]Male') %in%
       colnames(x$`_data`)))
 

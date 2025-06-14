@@ -17,19 +17,19 @@
 #'               cdm = cdm,
 #'               codes = list("test_codelist" = c(3001467L, 45875977L)))
 #'
-#' tableMeasurementValueAsNumericuset(result)
+#' tableMeasurementValueAsNumeric(result)
 #'
 #' CDMConnector::cdmDisconnect(cdm = cdm)
 #' }
 #'
-tableMeasurementValueAsNumeric  <- function(result,
-                                            type = "gt",
-                                            header = c(visOmopResults::strataColumns(result)),
-                                            groupColumn = c("codelist_name"),
-                                            settingsColumn = character(),
-                                            hide = c("variable_level", "cohort_table"),
-                                            style = "default",
-                                            .options = list()){
+tableMeasurementValueAsNumeric <- function(result,
+                                           type = "gt",
+                                           header = c(visOmopResults::strataColumns(result)),
+                                           groupColumn = c("codelist_name"),
+                                           settingsColumn = character(),
+                                           hide = c("variable_level", "cohort_table"),
+                                           style = "default",
+                                           .options = list()){
   rlang::check_installed("visOmopResults")
 
   # check inputs
@@ -51,7 +51,7 @@ tableMeasurementValueAsNumeric  <- function(result,
   columnOrder <- columnOrder[columnOrder %in% visOmopResults::tableColumns(result)]
 
   factors <- result |>
-    dplyr::filter(variable_name == "number records") |>
+    dplyr::filter(.data$variable_name == "number records") |>
     visOmopResults::splitAll() |>
     dplyr::select(dplyr::any_of(c("cdm_name", "codelist_name", "concept_name", "unit_concept_name", "estimate_value"))) |>
     dplyr::mutate(estimate_value = as.numeric(.data$estimate_value)) |>
