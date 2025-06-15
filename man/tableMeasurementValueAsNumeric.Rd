@@ -57,7 +57,7 @@ result <- summariseMeasurementUse(
               cdm = cdm,
               codes = list("test_codelist" = c(3001467L, 45875977L)))
 
-tableMeasurementValueAsNumericuset(result)
+tableMeasurementValueAsNumeric(result)
 
 CDMConnector::cdmDisconnect(cdm = cdm)
 }
