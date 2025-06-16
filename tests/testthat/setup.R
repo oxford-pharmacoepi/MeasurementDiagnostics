@@ -95,9 +95,9 @@ testMockCdm <- function() {
   )
 
   # concept
-  conceptSet <- c(8507, 8532, 3001467, 45875977, 194152, 4092121, 1033535, 4328749L, 4267416L)
-  conceptName <- c("Male", "Female", "Alkaline phosphatase.bone [Enzymatic activity/volume] in Serum or Plasma", "PhenX", "Renal agenesis and dysgenesis", "Level of mood", "Minimum Data Set", "High", "Low")
-  domain <- c("Gender", "Gender", "Measurement", "Measurement", "Condition", "Observation", "Observation", "Meas Value", "Meas Value")
+  conceptSet <- c(8507, 8532, 3001467, 45875977, 194152, 4092121, 1033535, 4328749L, 4267416L, 9529)
+  conceptName <- c("Male", "Female", "Alkaline phosphatase.bone [Enzymatic activity/volume] in Serum or Plasma", "PhenX", "Renal agenesis and dysgenesis", "Level of mood", "Minimum Data Set", "High", "Low", "kilogram")
+  domain <- c("Gender", "Gender", "Measurement", "Measurement", "Condition", "Observation", "Observation", "Meas Value", "Meas Value", "Unit")
   concept <- dplyr::tibble(
     concept_id = conceptSet,
     concept_name = conceptName,

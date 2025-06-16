@@ -1,5 +1,4 @@
 test_that("table works", {
-
   cdm <- testMockCdm()
   cdm <- copyCdm(cdm)
 

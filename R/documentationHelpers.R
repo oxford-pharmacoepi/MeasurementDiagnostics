@@ -32,11 +32,15 @@ NULL
 
 #' Helper for consistent documentation of `plot`.
 #'
+#' @param x Columns to use as horizontal axes. See options with
+#' `visOmopResults::plotColumns(result)`.
+#' @param y Columns to use as horizontal axes. See options with
+#' `visOmopResults::plotColumns(result)`.
 #' @param facet Columns to facet by. See options with
-#' `availablePlotColumns(result)`. Formula is also allowed to specify rows and
-#' columns.
+#' `visOmopResults::plotColumns(result)`. Formula input is also allowed to
+#' specify rows and columns.
 #' @param colour Columns to color by. See options with
-#' `availablePlotColumns(result)`.
+#' `visOmopResults::plotColumns(result)`.
 #'
 #' @name plotDoc
 #' @keywords internal

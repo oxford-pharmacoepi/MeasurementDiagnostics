@@ -22,14 +22,14 @@
 #' CDMConnector::cdmDisconnect(cdm = cdm)
 #' }
 #'
-tableMeasurementValueAsConcept  <- function(result,
-                                            type = "gt",
-                                            header = c(visOmopResults::strataColumns(result)),
-                                            groupColumn = c("codelist_name"),
-                                            settingsColumn = character(),
-                                            hide = c("cohort_table"),
-                                            style = "default",
-                                            .options = list()){
+tableMeasurementValueAsConcept <- function(result,
+                                           type = "gt",
+                                           header = c(visOmopResults::strataColumns(result)),
+                                           groupColumn = c("codelist_name"),
+                                           settingsColumn = character(),
+                                           hide = c("cohort_table"),
+                                           style = "default",
+                                           .options = list()){
   rlang::check_installed("visOmopResults")
 
   # check inputs

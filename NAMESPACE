@@ -3,6 +3,8 @@
 export("%>%")
 export(mockMeasurementDiagnostics)
 export(plotMeasurementTimings)
+export(plotMeasurementValueAsConcept)
+export(plotMeasurementValueAsNumeric)
 export(summariseCohortMeasurementUse)
 export(summariseMeasurementUse)
 export(tableMeasurementTimings)
