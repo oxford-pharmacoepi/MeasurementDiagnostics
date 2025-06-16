@@ -17,7 +17,7 @@ test_that("summariseMeasurementUse works", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("sex &&& age_group", 3)),
-      additional = c("", "concept_id &&& unit_concept_id", "concept_id &&& value_as_concept_id"),
+      additional = c("", "concept_id &&& unit_concept_id &&& domain_id", "concept_id &&& value_as_concept_id &&& domain_id"),
       min_cell_count = "0"
     )
   )
@@ -243,3 +243,31 @@ test_that("summariseMeasurementUse checks", {
     )
   )
 })
+
+test_that("summariseMeasurementUse observation domain", {
+  skip_on_cran()
+  cdm <- testMockCdm()
+  cdm <- copyCdm(cdm)
+  res <- summariseMeasurementUse(
+    cdm = cdm,
+    codes = list("mix" = c(3001467, 45875977, 194152, 4092121, 1033535)),
+    bySex = FALSE,
+    byYear = FALSE,
+    ageGroup = NULL,
+    dateRange = as.Date(c("2000-01-01", "2005-01-01")),
+    checks = c("measurement_value_as_numeric", "measurement_value_as_concept")
+  )
+  tab <- res |> visOmopResults::splitAdditional() |> dplyr::filter(result_id == 2) |> dplyr::distinct(concept_id, domain_id)
+  expect_equal(
+    tab$concept_id |> sort(),
+    c("3001467", "4092121", "overall")
+  )
+  expect_equal(
+    tab$domain_id |> sort(),
+    c("Measurement", "Observation", "overall")
+  )
+
+})
+
+
+

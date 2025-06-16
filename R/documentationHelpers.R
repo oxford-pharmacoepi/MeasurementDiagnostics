@@ -1,7 +1,8 @@
 #' Helper for consistent documentation of `summariseMeasurement` functions.
 #'
 #' @param cdm A reference to the cdm object.
-#' @param codes A codelist of measurement codes for which to perform diagnostics.
+#' @param codes A codelist of measurement/observation codes for which to perform
+#' diagnostics.
 #' @param cohort A cohort in which to perfom the diagnostics of the measurement
 #' codes provided.
 #' @param timing Three options: 1) "any" if the interest is on measurement

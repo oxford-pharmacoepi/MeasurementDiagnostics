@@ -19,7 +19,8 @@ summariseMeasurementUse(
 \arguments{
 \item{cdm}{A reference to the cdm object.}
 
-\item{codes}{A codelist of measurement codes for which to perform diagnostics.}
+\item{codes}{A codelist of measurement/observation codes for which to perform
+diagnostics.}
 
 \item{byConcept}{TRUE or FALSE. If TRUE code use will be summarised by concept.}
 
