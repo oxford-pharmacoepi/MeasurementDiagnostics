@@ -1,7 +1,6 @@
 #' Plot summariseMeasurementTiming results.
 #'
 #' @inheritParams resultDoc
-#' @param x Columns to use as horizontal axes.
 #' @param plotType Type of desired formatted table, possibilities are "boxplot" and
 #' "densityplot".
 #' @inheritParams timeScaleDoc
@@ -75,11 +74,13 @@ plotMeasurementTimings <- function(result,
       title = ggplot2::element_blank(),
       y = lab,
       x = ggplot2::element_blank()
-    )
+    ) +
+    visOmopResults::themeVisOmop()
 
   return(p)
 }
 
+# change to visOmopResults in next release
 emptyPlot <- function(title = "No result to plot",
                       subtitle = "") {
   ggplot2::ggplot() +
@@ -88,7 +89,4 @@ emptyPlot <- function(title = "No result to plot",
       title = title,
       subtitle = subtitle
     )
-}
-pkgVersion <- function() {
-  as.character(utils::packageVersion("MeasurementDiagnostics"))
 }

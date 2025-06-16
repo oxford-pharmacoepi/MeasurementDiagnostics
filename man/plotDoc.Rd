@@ -4,12 +4,18 @@
 \alias{plotDoc}
 \title{Helper for consistent documentation of `plot`.}
 \arguments{
+\item{x}{Columns to use as horizontal axes. See options with
+`visOmopResults::plotColumns(result)`.}
+
+\item{y}{Columns to use as horizontal axes. See options with
+`visOmopResults::plotColumns(result)`.}
+
 \item{facet}{Columns to facet by. See options with
-`availablePlotColumns(result)`. Formula is also allowed to specify rows and
-columns.}
+`visOmopResults::plotColumns(result)`. Formula input is also allowed to
+specify rows and columns.}
 
 \item{colour}{Columns to color by. See options with
-`availablePlotColumns(result)`.}
+`visOmopResults::plotColumns(result)`.}
 }
 \description{
 Helper for consistent documentation of `plot`.

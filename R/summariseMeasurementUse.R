@@ -28,7 +28,6 @@ summariseMeasurementUse <- function(cdm,
                                     checks = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept")) {
   # check inputs
   cdm <- omopgenerics::validateCdmArgument(cdm)
-  codes <- omopgenerics::validateConceptSetArgument(codes)
   prefix <- omopgenerics::tmpPrefix()
 
   result <- summariseMeasurementUseInternal(
@@ -61,6 +60,7 @@ summariseMeasurementUseInternal <- function(cdm,
                                             dateRange,
                                             checks) {
   # checks
+  codes <- omopgenerics::validateConceptSetArgument(codes)
   ageGroup <- omopgenerics::validateAgeGroupArgument(ageGroup = ageGroup)
   omopgenerics::assertLogical(byConcept, length = 1)
   omopgenerics::assertLogical(byYear, length = 1)
@@ -430,8 +430,8 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
           "unit_concept_id" = "concept_id",
           "unit_concept_name" = "concept_name"
         ) |>
-        dplyr::mutate(unit_concept_id = as.character(.data$unit_concept_id)) |>
-        dplyr::collect(),
+        dplyr::collect() |>
+        dplyr::mutate(unit_concept_id = as.character(.data$unit_concept_id)),
       by = "unit_concept_id"
     ) |>
     dplyr::mutate(
@@ -470,9 +470,9 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
         dplyr::select(
           "variable_level" = "concept_name",
           "value_as_concept_id" = "concept_id"
-        ) |>
-        dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
-        dplyr::collect(),
+        )|>
+        dplyr::collect() |>
+        dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)),
       by = "value_as_concept_id"
     ) |>
     dplyr::mutate(
