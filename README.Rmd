@@ -38,7 +38,7 @@ pak::pak("ohdsi/MeasurementDiagnostics")
 
 ## Example
 
-Let's say we our going to do a study where we are going to be using measurements of respiratory function. We can use MeasurementDiagnostics to better understand the use of these measurements.
+Let's say we are going to do a study where we are going to be using measurements of respiratory function. We can use MeasurementDiagnostics to better understand the use of these measurements.
 
 For this example we'll use the Eunomia data. 
 
