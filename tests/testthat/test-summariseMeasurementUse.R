@@ -115,6 +115,7 @@ test_that("summariseMeasurementUse straifications work", {
       sort(),
     c("1", "1", "1", "1")
   )
+  expect_true(unique(omopgenerics::settings(res)$date_range) == "2000-01-01 to 2005-01-01")
 
   expect_equal(
     res |>

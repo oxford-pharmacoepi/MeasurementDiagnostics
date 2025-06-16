@@ -175,7 +175,7 @@ summariseMeasurementUseInternal <- function(cdm,
       suppressMessages() |>
       transformMeasurementRecords(
         cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
-        installedVersion, timingName, cohortName
+        installedVersion, timingName, cohortName, dateRange
       )
   } else {
     measurementTiming <- NULL
@@ -203,7 +203,7 @@ summariseMeasurementUseInternal <- function(cdm,
       transformMeasurementValue(
         cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
         cohortName = cohortName, installedVersion = installedVersion,
-        timing = timingName, byConcept = byConcept
+        timing = timingName, byConcept = byConcept, dateRange
       )
   } else {
     measurementNumeric <- NULL
@@ -228,7 +228,7 @@ summariseMeasurementUseInternal <- function(cdm,
     transformMeasurementConcept(
       cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
       cohortName = cohortName, installedVersion = installedVersion,
-      timing = timingName, byConcept = byConcept
+      timing = timingName, byConcept = byConcept, dateRange
     )
   } else {
     measurementConcept <- NULL
@@ -379,7 +379,7 @@ addIndex <- function(cohort, cols) {
   return(invisible(NULL))
 }
 
-transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timingName, cohortName) {
+transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timingName, cohortName, dateRange) {
 
   cohortTable <- "cohort_table"[!is.null(cohortName)]
   x <- x |>
@@ -413,12 +413,12 @@ transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timing
     ) |>
     omopgenerics::uniteAdditional(cols = c(cohortTable)) |>
     dplyr::select(omopgenerics::resultColumns()) |>
-    updateSummarisedResultSettings(resultType = "measurement_timings", installedVersion, timingName, cohortTable)
+    updateSummarisedResultSettings(resultType = "measurement_timings", installedVersion, timingName, cohortTable, dateRange)
 
   return(x)
 }
 
-transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersion, timing, byConcept) {
+transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersion, timing, byConcept, dateRange) {
   cohortTable <- "cohort_table"[!is.null(cohortName)]
   x <- x |>
     dplyr::filter(.data$variable_name != "number subjects") |>
@@ -452,13 +452,13 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
 
   x <- x  |>
     dplyr::select(omopgenerics::resultColumns()) |>
-    updateSummarisedResultSettings(resultType = "measurement_value_as_numeric", installedVersion, timing, cohortTable)
+    updateSummarisedResultSettings(resultType = "measurement_value_as_numeric", installedVersion, timing, cohortTable, dateRange)
 
   return(x)
 }
 
 transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
-                                        installedVersion, timing, byConcept) {
+                                        installedVersion, timing, byConcept, dateRange) {
 
   cohortTable <- "cohort_table"[!is.null(cohortName)]
 
@@ -494,7 +494,7 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
   }
 
   x <- x|>
-    updateSummarisedResultSettings(resultType = "measurement_value_as_concept", installedVersion, timing, cohortTable)
+    updateSummarisedResultSettings(resultType = "measurement_value_as_concept", installedVersion, timing, cohortTable, dateRange)
 
   return(x)
 }
@@ -520,11 +520,16 @@ addStrata <- function(x, bySex, byYear, ageGroup, name) {
   return(x)
 }
 
-updateSummarisedResultSettings <- function(x, resultType, installedVersion, timingName, cohortTable) {
+updateSummarisedResultSettings <- function(x, resultType, installedVersion, timingName, cohortTable, dateRange) {
   group <- omopgenerics::groupColumns(x)
   if (length(group) > 0) paste0(unique(unlist(group)), collapse = " &&& ")
   additional <- omopgenerics::additionalColumns(x)
   if (length(additional) > 0) paste0(unique(unlist(additional)), collapse = " &&& ")
+  if (!all(is.na(dateRange)) & length(dateRange) > 1) {
+    date_range <- paste0(dateRange[1], " to ", dateRange[2])
+  } else {
+    date_range <- NULL
+  }
   x |>
     omopgenerics::newSummarisedResult(
       settings = omopgenerics::settings(x) |>
@@ -534,7 +539,8 @@ updateSummarisedResultSettings <- function(x, resultType, installedVersion, timi
           package_version = installedVersion,
           group = group,
           additional = additional,
-          timing = timingName
+          timing = timingName,
+          date_range = date_range
         )
     )
 }
