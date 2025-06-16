@@ -1,3 +1,27 @@
+#' Helper for consistent documentation of `summariseMeasurement` functions.
+#'
+#' @param cdm A reference to the cdm object.
+#' @param codes A codelist of measurement codes for which to perform diagnostics.
+#' @param cohort A cohort in which to perfom the diagnostics of the measurement
+#' codes provided.
+#' @param timing Three options: 1) "any" if the interest is on measurement
+#' recorded any time, 2) "during", if interested in measurements while the
+#' subject is in the cohort (or in observation if cohort = NULL), and 3)
+#' "cohort_start_date" for measurements ocurring at cohort start date (or at
+#' "observation_period_start_date if cohort = NULL).
+#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by concept.
+#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
+#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
+#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
+#' @param dateRange Two dates. The first indicating the earliest measurement
+#' date and the second indicating the latest possible measurement date.
+#' @param checks Diagnostics to run. Options are: "measurement_timing",
+#' "measurement_value_as_numeric", and "measurement_value_as_concept".
+#'
+#' @name summariseMeasurementDoc
+#' @keywords internal
+NULL
+
 #' Helper for consistent documentation of `result`.
 #'
 #' @param result A summarised_result object.
