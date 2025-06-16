@@ -259,12 +259,12 @@ test_that("summariseMeasurementUse observation domain", {
   )
   tab <- res |> visOmopResults::splitAdditional() |> dplyr::filter(result_id == 2) |> dplyr::distinct(concept_id, domain_id)
   expect_equal(
-    tab$concept_id,
-    c("overall", "3001467", "4092121")
+    tab$concept_id |> sort(),
+    c("3001467", "4092121", "overall")
   )
   expect_equal(
-    tab$domain_id,
-    c("overall", "Measurement", "Observation")
+    tab$domain_id |> sort(),
+    c("Measurement", "Observation", "overall")
   )
 
 })
