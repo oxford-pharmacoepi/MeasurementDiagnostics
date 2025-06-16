@@ -1,4 +1,7 @@
-# EmptyPackageTemplate
+<!-- README.md is generated from README.Rmd. Please edit that file -->
 
-This template empty package is meant to be used to create new R packages.
-See extras/PackageMaintenance.R to see the commands to be executed when creating the package.
+# MeasurementDiagnostics <img src="man/HexstickerMeasurementDiagnostics.png" align="right" height="180"/>
+
+<!-- badges: start -->
+
+The MeasurementDiagnostics package helps us to assess a set of pre-specified measurements taken in a database or in a cohort.
