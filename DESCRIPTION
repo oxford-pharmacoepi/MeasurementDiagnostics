@@ -9,25 +9,24 @@ Authors@R: c(
     role = c("aut", "cre"), comment = c(ORCID = "0009-0006-7948-3747")),
     person("Marta", "Alcalde-Herraiz", , "marta.alcaldeherraiz@ndorms.ox.ac.uk", 
     role = c("aut"), comment = c(ORCID = "0009-0002-4405-1814")))
-Description: Diagnostics of codelists based on cocnepts from the domain 
-measurements. This package works for data mapped to the OMOP Common Data Model.
+Description: Diagnostics of codelists based on cocnepts from the domain measurements. This package works for data mapped to the OMOP Common Data Model.
 Imports: 
     cli,
-    CohortConstructor,
+    CohortConstructor (>= 0.4.0),
     DBI,
     dplyr,
     magrittr,
-    omopgenerics,
-    PatientProfiles,
+    omopgenerics (>= 1.2.0),
+    PatientProfiles (>= 1.4.0),
     purrr,
     rlang
 Suggests: 
-    CDMConnector,
-    CodelistGenerator,
-    visOmopResults,
+    CDMConnector (>= 2.0.0),
+    CodelistGenerator (>= 3.5.0),
+    visOmopResults (>= 1.0.2),
     duckdb,
     knitr,
-    omock,
+    omock (>= 0.4.0),
     rmarkdown,
     testthat,
     ggplot2,
