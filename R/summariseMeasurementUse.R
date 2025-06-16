@@ -1,15 +1,6 @@
 #' Diagnostics of a codelist of measurement codes in the database
 #'
-#' @param cdm A reference to the cdm object.
-#' @param codes A codelist of measurement codes for which to perform diagnostics.
-#' @param byConcept TRUE or FALSE. If TRUE code use will be summarised by concept.
-#' @param byYear TRUE or FALSE. If TRUE code use will be summarised by year.
-#' @param bySex TRUE or FALSE. If TRUE code use will be summarised by sex.
-#' @param ageGroup If not NULL, a list of ageGroup vectors of length two.
-#' @param dateRange Two dates. The first indicating the earliest measurement
-#' date and the second indicating the latest possible measurement date.
-#' @param checks Diagnostics to run. Options are: "measurement_timing",
-#' "measurement_value_as_numeric", and "measurement_value_as_concept".
+#' @inheritParams summariseMeasurementDoc
 #'
 #' @return A summarised result
 #' @export
