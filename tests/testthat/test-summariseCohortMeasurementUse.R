@@ -12,7 +12,7 @@ test_that("summariseCohortMeasurementUse works", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("", 3)),
-      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),
+      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table &&& domain_id", "concept_id &&& value_as_concept_id &&& cohort_table &&& domain_id"),
       min_cell_count = "0",
       timing = "any"
     )
@@ -213,7 +213,7 @@ test_that("summariseCohortMeasurementUse straifications work", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("sex &&& year", 3)),
-      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),
+      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table &&& domain_id", "concept_id &&& value_as_concept_id &&& cohort_table &&& domain_id"),
       min_cell_count = "0",
       date_range = "1995-01-01 to 2020-01-01",
       timing = "during"

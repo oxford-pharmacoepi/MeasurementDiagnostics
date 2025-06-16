@@ -46,7 +46,12 @@ tableMeasurementValueAsNumeric <- function(result,
 
   checkVersion(result)
 
-  columnOrder <- c("cdm_name", "cohort_table", "codelist_name", "concept_name", "concept_id" , "unit_concept_name", "unit_concept_id", "sex", "age_group", "year", settingsColumn, "variable_name", "variable_level", "estimate_name", "estimate_value")
+  columnOrder <- c(
+    "cdm_name", "cohort_table", "codelist_name", "concept_name", "concept_id",
+    "domain_id", "unit_concept_name", "unit_concept_id", "sex", "age_group",
+    "year", settingsColumn, "variable_name", "variable_level", "estimate_name",
+    "estimate_value"
+  )
   # temp fix for visOmpReuslts issue 355
   columnOrder <- columnOrder[columnOrder %in% visOmopResults::tableColumns(result)]
 
@@ -76,7 +81,7 @@ tableMeasurementValueAsNumeric <- function(result,
       header = header,
       settingsColumn = settingsColumn,
       groupColumn = groupColumn,
-      rename = c("CDM name" = "cdm_name", "Concept ID" = "concept_id", "Unit concept ID" = "unit_concept_id"),
+      rename = c("CDM name" = "cdm_name", "Concept ID" = "concept_id", "Unit concept ID" = "unit_concept_id", "Domain ID" = "domain_id"),
       type = type,
       hide = hide,
       columnOrder = columnOrder,

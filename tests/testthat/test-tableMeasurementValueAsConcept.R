@@ -14,7 +14,7 @@ test_that("table works", {
                                                       hide = c("cohort_table"),
                                                       .options = list()))
   expect_true("gt_tbl" %in% class(x))
-  expect_true(all(c('Codelist name', 'CDM name', 'Concept name', 'Concept ID', 'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name', 'Estimate value') %in% colnames(x$`_data`)))
+  expect_true(all(c('Codelist name', 'CDM name', 'Concept name', 'Concept ID', "Domain ID", 'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name', 'Estimate value') %in% colnames(x$`_data`)))
 
   expect_no_error(x <- tableMeasurementValueAsConcept(result, type = "flextable"))
   expect_true("flextable" %in% class(x))
@@ -42,7 +42,7 @@ test_that("table works", {
   expect_no_error(x <- tableMeasurementValueAsConcept(result, hide = character()))
 
   expect_true(all(
-    c('Codelist name', 'CDM name', 'Cohort table', 'Concept name', 'Concept ID',
+    c('Codelist name', 'CDM name', 'Cohort table', 'Concept name', 'Concept ID', "Domain ID",
       'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name',
       '[header_name]Sex\n[header_level]overall',
       '[header_name]Sex\n[header_level]Male') %in%

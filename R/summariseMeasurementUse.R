@@ -106,38 +106,27 @@ summariseMeasurementUseInternal <- function(cdm,
       cdm$concept |> dplyr::select(dplyr::all_of(c("concept_id", "concept_name", "domain_id"))),
       by = "concept_id"
     )
+
   nStart <- dplyr::pull(dplyr::tally(cdm[[settingsTableName]]))
   cdm[[settingsTableName]] <- cdm[[settingsTableName]] |>
-    dplyr::filter(tolower(.data$domain_id) == "measurement") |>
+    dplyr::filter(tolower(.data$domain_id) %in% c("measurement", "observation")) |>
     dplyr::compute(name = settingsTableName, temporary = FALSE)
   nEnd <- dplyr::pull(dplyr::tally(cdm[[settingsTableName]]))
-  if (nStart != nEnd) cli::cli_inform(c("!" = "{nStart-nEnd} concept{?s} excluded for not being in the measurement domain"))
+  if (nStart != nEnd) cli::cli_inform(c("!" = "{nStart-nEnd} concept{?s} excluded for not being in the measurement/observation domain"))
   addIndex(cdm[[settingsTableName]], cols = "concept_id")
 
   # cohort
-  cli::cli_inform(c(">" = "Subsetting measurement table to the subjects and timing of interest."))
+  cli::cli_inform(c(">" = "Getting measurement records based on codes."))
   measurementCohortName <- omopgenerics::uniqueTableName(prefix = prefix)
+  cdm[[measurementCohortName]] <- getCohortFromCodes(cdm, codes, settingsTableName, name = measurementCohortName)
+
+  cli::cli_inform(c(">" = "Subsetting measurement table to the subjects and timing of interest."))
   # subset to cohort and timing
   measurement <- subsetMeasurementTable(cdm, cohortName, timing, measurementCohortName, dateRange)
-  cli::cli_inform(c(">" = "Getting measurement records based on measurement codes."))
+
   measurement <- measurement |>
-    dplyr::rename("concept_id" = "measurement_concept_id") |>
-    dplyr::inner_join(
-      cdm[[settingsTableName]] |>
-        dplyr::select(dplyr::all_of(c("cohort_definition_id", "concept_id", "codelist_name"))),
-      by = "concept_id"
-    ) |>
-    dplyr::select(dplyr::all_of(c(
-      "cohort_definition_id", "subject_id" = "person_id",
-      "cohort_start_date" = "measurement_date", "measurement_id",
-      "codelist_name", "concept_id", "unit_concept_id", "value_as_number",
-      "value_as_concept_id"
-    ))) |>
-    dplyr::mutate(
-      cohort_end_date = .data$cohort_start_date,
-      unit_concept_id = as.integer(.data$unit_concept_id),
-      value_as_concept_id = as.integer(.data$value_as_concept_id)
-    ) |>
+    dplyr::rename("subject_id" = "person_id", "cohort_start_date" = "record_date") |>
+    dplyr::mutate(cohort_definition_id = 1L, cohort_end_date = .data$cohort_start_date) |>
     dplyr::compute(name = measurementCohortName, temporary = FALSE) |>
     omopgenerics::newCohortTable(
       cohortSetRef = measurementSettings,
@@ -249,7 +238,7 @@ groupIdToName <- function(x, newSet, cols = c("codelist_name", "concept_name")) 
   x |>
     dplyr::left_join(
       newSet |>
-        dplyr::select(dplyr::all_of(c("concept_id", "concept_name"))) |>
+        dplyr::select(dplyr::all_of(c("concept_id", "concept_name", "domain_id"))) |>
         dplyr::mutate(concept_id = as.character(.data$concept_id)),
       by = "concept_id"
     ) |>
@@ -263,13 +252,13 @@ subsetMeasurementTable <- function(cdm, cohortName, timing, name, dateRange) {
 
   if (is.null(cohortName) & timing == "any") {
     return(
-      cdm$measurement |>
+      cdm[[name]] |>
         measurementInDateRange(dateRange, name)
     )
   }
   cohort <- CohortConstructor::addCohortTableIndex(cdm[[cohortName]])
   if (timing == "during") {
-    measurement <- cdm$measurement |>
+    measurement <- cdm[[name]] |>
       dplyr::inner_join(
         cohort |>
           dplyr::select(
@@ -279,26 +268,26 @@ subsetMeasurementTable <- function(cdm, cohortName, timing, name, dateRange) {
         relationship = "many-to-many"
       ) |>
       dplyr::filter(
-        .data$measurement_date >= .data$cohort_start_date,
-        .data$measurement_date <= .data$cohort_end_date
+        .data$record_date >= .data$cohort_start_date,
+        .data$record_date <= .data$cohort_end_date
       ) |>
       dplyr::select(!dplyr::starts_with("cohort_")) |>
       dplyr::compute(name = name, temporary = FALSE)
   }
   if (timing == "cohort_start_date") {
-    measurement <-   measurement <- cdm$measurement |>
+    measurement <-   measurement <- cdm[[name]] |>
       dplyr::inner_join(
         cohort |>
           dplyr::select(
-            "person_id" = "subject_id", "measurement_date" = "cohort_start_date"
+            "person_id" = "subject_id", "record_date" = "cohort_start_date"
           ),
-        by = c("person_id", "measurement_date"),
+        by = c("person_id", "record_date"),
         relationship = "many-to-many"
       ) |>
       dplyr::compute(name = name, temporary = FALSE)
   }
   if (timing == "any") {
-    measurement <-   measurement <- cdm$measurement |>
+    measurement <-   measurement <- cdm[[name]] |>
       dplyr::inner_join(
         cohort |>
           dplyr::select("person_id" = "subject_id") |>
@@ -315,14 +304,14 @@ subsetMeasurementTable <- function(cdm, cohortName, timing, name, dateRange) {
 measurementInDateRange <- function(x, dateRange, name) {
   if (!is.na(dateRange[1])) {
     x <- x |>
-      dplyr::filter(.data$measurement_date >= !!dateRange[1])
+      dplyr::filter(.data$record_date >= !!dateRange[1])
   }
   if (!is.na(dateRange[2])) {
     x <- x |>
-      dplyr::filter(.data$measurement_date <= !!dateRange[2])
+      dplyr::filter(.data$record_date <= !!dateRange[2])
   }
   return(
-    x |> dplyr::compute(name = name, temporary= FALSE)
+    x |> dplyr::compute(name = name, temporary = FALSE)
   )
 }
 
@@ -443,7 +432,7 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
   if (byConcept) {
     x <- x |>
       groupIdToName(newSet = newSet, cols = c("codelist_name", "concept_name", "unit_concept_name")) |>
-      omopgenerics::uniteAdditional(cols = c("concept_id", "unit_concept_id", cohortTable))
+      omopgenerics::uniteAdditional(cols = c("concept_id", "unit_concept_id", cohortTable, "domain_id"))
   } else {
     x <- x |>
       omopgenerics::uniteGroup(cols = c("codelist_name", "unit_concept_name")) |>
@@ -485,7 +474,7 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
     x <- x |>
       omopgenerics::splitGroup() |>
       groupIdToName(newSet = newSet) |>
-      omopgenerics::uniteAdditional(cols = c("concept_id", "value_as_concept_id", cohortTable)) |>
+      omopgenerics::uniteAdditional(cols = c("concept_id", "value_as_concept_id", cohortTable, "domain_id")) |>
       dplyr::select(omopgenerics::resultColumns())
   } else {
     x <- x |>
@@ -543,4 +532,38 @@ updateSummarisedResultSettings <- function(x, resultType, installedVersion, timi
           date_range = date_range
         )
     )
+}
+
+getCohortFromCodes <- function(cdm, codes, settingsTableName, name) {
+
+  domains <- cdm[[settingsTableName]] |> dplyr::pull("domain_id") |> unique() |> tolower()
+  tables <- list()
+
+  for (tab in domains) {
+    tables[[tab]] <- cdm[[tab]] |>
+      dplyr::rename("concept_id" = !!paste0(tab, "_concept_id")) |>
+      dplyr::inner_join(
+        cdm[[settingsTableName]] |>
+          dplyr::select(dplyr::all_of(c("cohort_definition_id", "concept_id", "codelist_name"))),
+        by = "concept_id"
+      ) |>
+      dplyr::select(dplyr::all_of(c(
+        "cohort_definition_id",
+        "person_id",
+        "record_date" = paste0(tab, "_date"),
+        "record_id" = paste0(tab, "_id"),
+        "codelist_name",
+        "concept_id",
+        "unit_concept_id",
+        "value_as_number",
+        "value_as_concept_id"
+      ))) |>
+      dplyr::mutate(
+        unit_concept_id = as.integer(.data$unit_concept_id),
+        value_as_concept_id = as.integer(.data$value_as_concept_id)
+      )
+  }
+
+  Reduce(dplyr::union_all, tables) |>
+    dplyr::compute(name = name, temporary = FALSE)
 }

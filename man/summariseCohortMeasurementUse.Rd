@@ -18,7 +18,8 @@ summariseCohortMeasurementUse(
 )
 }
 \arguments{
-\item{codes}{A codelist of measurement codes for which to perform diagnostics.}
+\item{codes}{A codelist of measurement/observation codes for which to perform
+diagnostics.}
 
 \item{cohort}{A cohort in which to perfom the diagnostics of the measurement
 codes provided.}
