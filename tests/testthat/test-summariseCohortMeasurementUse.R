@@ -215,6 +215,7 @@ test_that("summariseCohortMeasurementUse straifications work", {
       strata = c(rep("sex &&& year", 3)),
       additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table", "concept_id &&& value_as_concept_id &&& cohort_table"),
       min_cell_count = "0",
+      date_range = "1995-01-01 to 2020-01-01",
       timing = "during"
     )
   )
