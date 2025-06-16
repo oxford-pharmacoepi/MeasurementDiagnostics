@@ -8,13 +8,22 @@
 `visOmopResults::tableType()`.}
 
 \item{header}{Columns to use as header. See options with
-`availableTableColumns(result)`.}
+`visOmopResults::tableColumns(result)`.}
 
 \item{groupColumn}{Columns to group by. See options with
-`availableTableColumns(result)`.}
+`visOmopResults::tableColumns(result)`.}
+
+\item{settingsColumn}{Columns from settings to include in results. See
+options with `visOmopResults::settingsColumns(result)`.}
 
 \item{hide}{Columns to hide from the visualisation. See options with
-`availableTableColumns(result)`.}
+`visOmopResults::tableColumns(result)`.}
+
+\item{style}{Named list that specifies how to style the different parts of
+the table generated. It can either be a pre-defined style ("default" or
+"darwin" - the latter just for gt and flextable), NULL to get the table type
+default style, or custom. Keep in mind that styling code is different for
+all table styles. To see the different styles use visOmopResults::tableStyle().}
 
 \item{.options}{A named list with additional formatting options.
 `visOmopResults::tableOptions()` shows allowed arguments and their default values.}
