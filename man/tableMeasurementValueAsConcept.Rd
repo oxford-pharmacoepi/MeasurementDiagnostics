@@ -10,7 +10,7 @@ tableMeasurementValueAsConcept(
   header = c(visOmopResults::strataColumns(result)),
   groupColumn = c("codelist_name"),
   settingsColumn = character(),
-  hide = c("cohort_table"),
+  hide = character(),
   style = "default",
   .options = list()
 )

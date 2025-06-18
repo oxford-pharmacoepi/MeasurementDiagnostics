@@ -369,8 +369,6 @@ addIndex <- function(cohort, cols) {
 }
 
 transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timingName, cohortName, dateRange) {
-
-  cohortTable <- "cohort_table"[!is.null(cohortName)]
   x <- x |>
     dplyr::select(!dplyr::starts_with("additional"))
 
@@ -400,15 +398,14 @@ transformMeasurementRecords <- function(x, cdm, newSet, installedVersion, timing
       cdm_name = omopgenerics::cdmName(cdm),
       cohort_table = cohortName
     ) |>
-    omopgenerics::uniteAdditional(cols = c(cohortTable)) |>
+    omopgenerics::uniteAdditional() |>
     dplyr::select(omopgenerics::resultColumns()) |>
-    updateSummarisedResultSettings(resultType = "measurement_timings", installedVersion, timingName, cohortTable, dateRange)
+    updateSummarisedResultSettings(resultType = "measurement_timings", installedVersion, timingName, cohortName, dateRange)
 
   return(x)
 }
 
 transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersion, timing, byConcept, dateRange) {
-  cohortTable <- "cohort_table"[!is.null(cohortName)]
   x <- x |>
     dplyr::filter(.data$variable_name != "number subjects") |>
     omopgenerics::splitGroup() |>
@@ -432,25 +429,22 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
   if (byConcept) {
     x <- x |>
       groupIdToName(newSet = newSet, cols = c("codelist_name", "concept_name", "unit_concept_name")) |>
-      omopgenerics::uniteAdditional(cols = c("concept_id", "unit_concept_id", cohortTable, "domain_id"))
+      omopgenerics::uniteAdditional(cols = c("concept_id", "unit_concept_id", "domain_id"))
   } else {
     x <- x |>
       omopgenerics::uniteGroup(cols = c("codelist_name", "unit_concept_name")) |>
-      omopgenerics::uniteAdditional(cols = c("unit_concept_id", cohortTable))
+      omopgenerics::uniteAdditional(cols = c("unit_concept_id"))
   }
 
   x <- x  |>
     dplyr::select(omopgenerics::resultColumns()) |>
-    updateSummarisedResultSettings(resultType = "measurement_value_as_numeric", installedVersion, timing, cohortTable, dateRange)
+    updateSummarisedResultSettings(resultType = "measurement_value_as_numeric", installedVersion, timing, cohortName, dateRange)
 
   return(x)
 }
 
 transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
                                         installedVersion, timing, byConcept, dateRange) {
-
-  cohortTable <- "cohort_table"[!is.null(cohortName)]
-
   x <- x |>
     dplyr::select(!c("additional_name", "additional_level")) |>
     dplyr::rename("value_as_concept_id" = "variable_level") |>
@@ -474,16 +468,16 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
     x <- x |>
       omopgenerics::splitGroup() |>
       groupIdToName(newSet = newSet) |>
-      omopgenerics::uniteAdditional(cols = c("concept_id", "value_as_concept_id", cohortTable, "domain_id")) |>
+      omopgenerics::uniteAdditional(cols = c("concept_id", "value_as_concept_id", "domain_id")) |>
       dplyr::select(omopgenerics::resultColumns())
   } else {
     x <- x |>
-      omopgenerics::uniteAdditional(cols = c("value_as_concept_id", cohortTable)) |>
+      omopgenerics::uniteAdditional(cols = c("value_as_concept_id")) |>
       dplyr::select(omopgenerics::resultColumns())
   }
 
   x <- x|>
-    updateSummarisedResultSettings(resultType = "measurement_value_as_concept", installedVersion, timing, cohortTable, dateRange)
+    updateSummarisedResultSettings(resultType = "measurement_value_as_concept", installedVersion, timing, cohortName, dateRange)
 
   return(x)
 }
@@ -509,7 +503,7 @@ addStrata <- function(x, bySex, byYear, ageGroup, name) {
   return(x)
 }
 
-updateSummarisedResultSettings <- function(x, resultType, installedVersion, timingName, cohortTable, dateRange) {
+updateSummarisedResultSettings <- function(x, resultType, installedVersion, timingName, cohortName, dateRange) {
   group <- omopgenerics::groupColumns(x)
   if (length(group) > 0) paste0(unique(unlist(group)), collapse = " &&& ")
   additional <- omopgenerics::additionalColumns(x)
@@ -529,7 +523,8 @@ updateSummarisedResultSettings <- function(x, resultType, installedVersion, timi
           group = group,
           additional = additional,
           timing = timingName,
-          date_range = date_range
+          date_range = date_range,
+          cohort_table = cohortName
         )
     )
 }

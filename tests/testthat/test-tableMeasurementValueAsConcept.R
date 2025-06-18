@@ -10,7 +10,7 @@ test_that("table works", {
                                                       type = "gt",
                                                       header = c(visOmopResults::strataColumns(result)),
                                                       groupColumn = c("codelist_name"),
-                                                      hide = c("cohort_table"),
+                                                      hide = c(),
                                                       .options = list()))
   expect_true("gt_tbl" %in% class(x))
   expect_true(all(c('Codelist name', 'CDM name', 'Concept name', 'Concept ID', "Domain ID", 'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name', 'Estimate value') %in% colnames(x$`_data`)))
@@ -38,10 +38,10 @@ test_that("table works", {
   # Summarise cohort measurement use ----
   result <- summariseCohortMeasurementUse(cohort = cdm$my_cohort, bySex = TRUE,
                                           codes = list("test_codelist" = c(3001467L, 45875977L)))
-  expect_no_error(x <- tableMeasurementValueAsConcept(result, hide = character()))
+  expect_no_error(x <- tableMeasurementValueAsConcept(result, hide = character(), settingsColumn = "cohort_table"))
 
   expect_true(all(
-    c('Codelist name', 'CDM name', 'Cohort table', 'Concept name', 'Concept ID', "Domain ID",
+    c('Codelist name', 'CDM name', 'Concept name', 'Concept ID', "Domain ID", 'Cohort table',
       'Variable name', 'Value as concept name', 'Value as concept ID', 'Estimate name',
       '[header_name]Sex\n[header_level]overall',
       '[header_name]Sex\n[header_level]Male') %in%

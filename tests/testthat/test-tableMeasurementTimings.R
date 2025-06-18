@@ -1,5 +1,4 @@
 test_that("check that it works ", {
-
   cdm <- testMockCdm()
   cdm <- copyCdm(cdm)
 
@@ -11,7 +10,7 @@ test_that("check that it works ", {
                                                type = "gt",
                                                header = c(visOmopResults::strataColumns(result)),
                                                groupColumn = c("codelist_name"),
-                                               hide = c("variable_name", "variable_level", "cohort_table"),
+                                               hide = c("variable_name", "variable_level"),
                                                .options = list()))
   expect_true("gt_tbl" %in% class(x))
   expect_true(all(c("Codelist name", "CDM name", "Estimate name", "Estimate value") %in% colnames(x$`_data`)))
@@ -45,7 +44,7 @@ test_that("check that it works ", {
                                                header = c(visOmopResults::strataColumns(result)),
                                                groupColumn = c("codelist_name"),
                                                settingsColumn = "timing",
-                                               hide = c("variable_level", "cohort_table"),
+                                               hide = c("variable_level"),
                                                .options = list()))
 
   expect_true(all(

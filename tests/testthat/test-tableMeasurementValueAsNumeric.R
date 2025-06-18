@@ -10,7 +10,7 @@ test_that("table works", {
                                                       type = "gt",
                                                       header = c(visOmopResults::strataColumns(result)),
                                                       groupColumn = c("codelist_name"),
-                                                      hide = c("variable_name", "variable_level", "cohort_table", "domain_id"),
+                                                      hide = c("variable_name", "variable_level", "domain_id"),
                                                       .options = list()))
   expect_true("gt_tbl" %in% class(x))
   expect_true(all(c("Codelist name", "CDM name", "Concept name", "Concept ID", "Unit concept name", "Unit concept ID", "Estimate name", "Estimate value") %in% colnames(x$`_data`)))
