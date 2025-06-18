@@ -10,7 +10,7 @@ tableMeasurementTimings(
   header = c(visOmopResults::strataColumns(result)),
   groupColumn = c("codelist_name"),
   settingsColumn = character(),
-  hide = c("variable_name", "variable_level", "cohort_table"),
+  hide = c("variable_name", "variable_level"),
   style = "default",
   .options = list()
 )

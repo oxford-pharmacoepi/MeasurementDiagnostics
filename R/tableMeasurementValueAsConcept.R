@@ -27,7 +27,7 @@ tableMeasurementValueAsConcept <- function(result,
                                            header = c(visOmopResults::strataColumns(result)),
                                            groupColumn = c("codelist_name"),
                                            settingsColumn = character(),
-                                           hide = c("cohort_table"),
+                                           hide = character(),
                                            style = "default",
                                            .options = list()){
   rlang::check_installed("visOmopResults")
@@ -47,7 +47,7 @@ tableMeasurementValueAsConcept <- function(result,
   checkVersion(result)
 
   columnOrder <- c(
-    "cdm_name", "cohort_table", "codelist_name", "concept_name", "concept_id" ,
+    "cdm_name", "codelist_name", "concept_name", "concept_id" ,
     "domain_id", "sex", "age_group", "year", settingsColumn, "variable_name",
     "variable_level", "value_as_concept_id", "estimate_name", "estimate_value"
   )

@@ -27,7 +27,7 @@ tableMeasurementTimings <- function(result,
                                     header = c(visOmopResults::strataColumns(result)),
                                     groupColumn = c("codelist_name"),
                                     settingsColumn = character(),
-                                    hide = c("variable_name", "variable_level", "cohort_table"),
+                                    hide = c("variable_name", "variable_level"),
                                     style = "default",
                                     .options = list()){
   rlang::check_installed("visOmopResults")
@@ -46,7 +46,7 @@ tableMeasurementTimings <- function(result,
 
   checkVersion(result)
 
-  columnOrder <- c("cdm_name", "cohort_table", "codelist_name", "sex", "age_group", "year", settingsColumn, "variable_name", "variable_level", "estimate_name", "estimate_value")
+  columnOrder <- c("cdm_name", "codelist_name", "sex", "age_group", "year", settingsColumn, "variable_name", "variable_level", "estimate_name", "estimate_value")
   # temp fix for visOmpReuslts issue 355
   columnOrder <- columnOrder[columnOrder %in% visOmopResults::tableColumns(result)]
 

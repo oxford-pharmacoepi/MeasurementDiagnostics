@@ -12,8 +12,9 @@ test_that("summariseCohortMeasurementUse works", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("", 3)),
-      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table &&& domain_id", "concept_id &&& value_as_concept_id &&& cohort_table &&& domain_id"),
+      additional = c("", "concept_id &&& unit_concept_id &&& domain_id", "concept_id &&& value_as_concept_id &&& domain_id"),
       min_cell_count = "0",
+      cohort_table = "my_cohort",
       timing = "any"
     )
   )
@@ -213,8 +214,9 @@ test_that("summariseCohortMeasurementUse straifications work", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
       strata = c(rep("sex &&& year", 3)),
-      additional = c("cohort_table", "concept_id &&& unit_concept_id &&& cohort_table &&& domain_id", "concept_id &&& value_as_concept_id &&& cohort_table &&& domain_id"),
+      additional = c("", "concept_id &&& unit_concept_id &&& domain_id", "concept_id &&& value_as_concept_id &&& domain_id"),
       min_cell_count = "0",
+      cohort_table = "my_cohort",
       date_range = "1995-01-01 to 2020-01-01",
       timing = "during"
     )
@@ -237,8 +239,9 @@ test_that("summariseCohortMeasurementUse straifications work", {
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
       group = c("codelist_name", "codelist_name &&& unit_concept_name", "codelist_name"),
       strata = c(rep("", 3)),
-      additional = c("cohort_table", "unit_concept_id &&& cohort_table", "value_as_concept_id &&& cohort_table"),
+      additional = c("", "unit_concept_id", "value_as_concept_id"),
       min_cell_count = "0",
+      cohort_table = "my_cohort",
       timing = "during"
     )
   )
