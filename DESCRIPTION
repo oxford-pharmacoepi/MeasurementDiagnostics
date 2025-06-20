@@ -1,6 +1,6 @@
 Package: MeasurementDiagnostics
 Type: Package
-Title: Measurement codelist diagnostics for OMOPped data.
+Title: Measurement codelist diagnostics for OMOPped data
 Version: 0.0.09
 Authors@R: c(
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", 

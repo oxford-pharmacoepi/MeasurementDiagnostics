@@ -1,6 +1,5 @@
 #' Format a measurement_timings object into a visual table
 #'
-#'
 #' @inheritParams resultDoc
 #' @inheritParams tableDoc
 #'
@@ -84,7 +83,8 @@ tableMeasurementTimings <- function(result,
       style = style,
       showMinCellCount = TRUE,
       .options = .options
-    )
+    ) |>
+    suppressWarnings()
 }
 
 

@@ -7,8 +7,8 @@
 plotMeasurementValueAsNumeric(
   result,
   x = c("unit_concept_name"),
-  facet = c("cdm_name", "codelist_name", "concept_name"),
-  colour = visOmopResults::strataColumns(result)
+  facet = c("codelist_name", "concept_name"),
+  colour = c("cdm_name", visOmopResults::strataColumns(result))
 )
 }
 \arguments{

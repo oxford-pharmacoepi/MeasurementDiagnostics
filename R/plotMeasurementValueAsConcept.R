@@ -23,8 +23,8 @@
 plotMeasurementValueAsConcept <- function(result,
                                           x = "count",
                                           y = "variable_level",
-                                          facet = c("cdm_name", "codelist_name", "concept_name"),
-                                          colour = visOmopResults::strataColumns(result)) {
+                                          facet = c("codelist_name", "concept_name"),
+                                          colour = c("cdm_name", visOmopResults::strataColumns(result))) {
   result <- omopgenerics::validateResultArgument(result)
   rlang::check_installed("visOmopResults")
   plotCols <- visOmopResults::plotColumns(result)
@@ -45,7 +45,7 @@ plotMeasurementValueAsConcept <- function(result,
   checkVersion(result)
 
   yLab <- visOmopResults::customiseText(
-    y, custom = c("variable" = "Value as concept name", "value_as_concept_id" = "Value as concept ID")
+    y, custom = c("variable_level" = "Value as concept name", "value_as_concept_id" = "Value as concept ID")
   )
 
   visOmopResults::barPlot(
