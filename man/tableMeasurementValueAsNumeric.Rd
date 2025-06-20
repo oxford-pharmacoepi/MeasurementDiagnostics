@@ -10,7 +10,7 @@ tableMeasurementValueAsNumeric(
   header = c(visOmopResults::strataColumns(result)),
   groupColumn = c("codelist_name"),
   settingsColumn = character(),
-  hide = "variable_level",
+  hide = c("variable_name", "variable_level"),
   style = "default",
   .options = list()
 )
