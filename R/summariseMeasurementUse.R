@@ -421,8 +421,12 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
     ) |>
     dplyr::mutate(
       cdm_name = omopgenerics::cdmName(cdm),
-      unit_concept_name = dplyr::if_else(is.na(.data$unit_concept_name), "-", .data$unit_concept_name),
-      unit_concept_id = dplyr::if_else(.data$unit_concept_id == "NA", "-", .data$unit_concept_id),
+      unit_concept_name = dplyr::if_else(
+        is.na(.data$unit_concept_name), "-", .data$unit_concept_name
+      ),
+      unit_concept_id = dplyr::if_else(
+        .data$unit_concept_id == "NA" | is.na(.data$unit_concept_id), "-", .data$unit_concept_id
+      ),
       cohort_table = cohortName
     )
 
