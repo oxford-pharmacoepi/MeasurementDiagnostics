@@ -116,11 +116,10 @@ summariseMeasurementUseInternal <- function(cdm,
   addIndex(cdm[[settingsTableName]], cols = "concept_id")
 
   # cohort
-  cli::cli_inform(c(">" = "Getting measurement records based on codes."))
   measurementCohortName <- omopgenerics::uniqueTableName(prefix = prefix)
   cdm[[measurementCohortName]] <- getCohortFromCodes(cdm, codes, settingsTableName, name = measurementCohortName)
 
-  cli::cli_inform(c(">" = "Subsetting measurement table to the subjects and timing of interest."))
+  cli::cli_inform(c(">" = "Subsetting records to the subjects and timing of interest."))
   # subset to cohort and timing
   measurement <- subsetMeasurementTable(cdm, cohortName, timing, measurementCohortName, dateRange)
 
@@ -172,7 +171,7 @@ summariseMeasurementUseInternal <- function(cdm,
 
   ## measurement value
   if ("measurement_value_as_numeric" %in% checks) {
-    cli::cli_inform(c(">" = "Summarising measurement results - value as number."))
+    cli::cli_inform(c(">" = "Summarising results - value as number."))
     # as numeric
     # 1) summarise numeric distribution
     measurementNumeric <- measurement |>
@@ -200,7 +199,7 @@ summariseMeasurementUseInternal <- function(cdm,
 
   ## counts as concept
   if ("measurement_value_as_concept" %in% checks) {
-    cli::cli_inform(c(">" = "Summarising measurement results - value as concept."))
+    cli::cli_inform(c(">" = "Summarising results - value as concept."))
     measurementConcept <- measurement |>
       dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
       PatientProfiles::summariseResult(
@@ -537,6 +536,11 @@ getCohortFromCodes <- function(cdm, codes, settingsTableName, name) {
   tables <- list()
 
   for (tab in domains) {
+    n <- cdm[[settingsTableName]] |>
+      dplyr::filter(tolower(.data$domain_id) == tab) |>
+      dplyr::tally() |>
+      dplyr::pull()
+    cli::cli_inform(c(">" = "Getting {tab} records based on {n} concept{?s}."))
     tables[[tab]] <- cdm[[tab]] |>
       dplyr::rename("concept_id" = !!paste0(tab, "_concept_id")) |>
       dplyr::inner_join(
