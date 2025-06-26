@@ -59,7 +59,7 @@ tableMeasurementValueAsNumeric <- function(result,
     visOmopResults::splitAll() |>
     dplyr::select(dplyr::any_of(c("cdm_name", "codelist_name", "concept_name", "unit_concept_name", "estimate_value"))) |>
     dplyr::mutate(estimate_value = as.numeric(.data$estimate_value)) |>
-    dplyr::arrange(.data$estimate_value) |>
+    dplyr::arrange(dplyr::desc(.data$estimate_value)) |>
     dplyr::select(!"estimate_value")
 
   if (nrow(factors) == 0) {
