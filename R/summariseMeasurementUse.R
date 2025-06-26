@@ -116,11 +116,10 @@ summariseMeasurementUseInternal <- function(cdm,
   addIndex(cdm[[settingsTableName]], cols = "concept_id")
 
   # cohort
-  cli::cli_inform(c(">" = "Getting measurement records based on codes."))
   measurementCohortName <- omopgenerics::uniqueTableName(prefix = prefix)
   cdm[[measurementCohortName]] <- getCohortFromCodes(cdm, codes, settingsTableName, name = measurementCohortName)
 
-  cli::cli_inform(c(">" = "Subsetting measurement table to the subjects and timing of interest."))
+  cli::cli_inform(c(">" = "Subsetting records to the subjects and timing of interest."))
   # subset to cohort and timing
   measurement <- subsetMeasurementTable(cdm, cohortName, timing, measurementCohortName, dateRange)
 
@@ -172,7 +171,7 @@ summariseMeasurementUseInternal <- function(cdm,
 
   ## measurement value
   if ("measurement_value_as_numeric" %in% checks) {
-    cli::cli_inform(c(">" = "Summarising measurement results - value as number."))
+    cli::cli_inform(c(">" = "Summarising results - value as number."))
     # as numeric
     # 1) summarise numeric distribution
     measurementNumeric <- measurement |>
@@ -200,25 +199,25 @@ summariseMeasurementUseInternal <- function(cdm,
 
   ## counts as concept
   if ("measurement_value_as_concept" %in% checks) {
-  cli::cli_inform(c(">" = "Summarising measurement results - value as concept."))
-  measurementConcept <- measurement |>
-    dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
-    PatientProfiles::summariseResult(
-      group = list("codelist_name", c("codelist_name", "concept_id"))[c(TRUE, byConcept)],
-      includeOverallGroup = FALSE,
-      strata = strata,
-      includeOverallStrata = TRUE,
-      variables = "value_as_concept_id",
-      estimates = c("count", "percentage"),
-      counts = FALSE,
-      weights = NULL
-    ) |>
-    suppressMessages() |>
-    transformMeasurementConcept(
-      cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
-      cohortName = cohortName, installedVersion = installedVersion,
-      timing = timingName, byConcept = byConcept, dateRange
-    )
+    cli::cli_inform(c(">" = "Summarising results - value as concept."))
+    measurementConcept <- measurement |>
+      dplyr::mutate(value_as_concept_id = as.character(.data$value_as_concept_id)) |>
+      PatientProfiles::summariseResult(
+        group = list("codelist_name", c("codelist_name", "concept_id"))[c(TRUE, byConcept)],
+        includeOverallGroup = FALSE,
+        strata = strata,
+        includeOverallStrata = TRUE,
+        variables = "value_as_concept_id",
+        estimates = c("count", "percentage"),
+        counts = FALSE,
+        weights = NULL
+      ) |>
+      suppressMessages() |>
+      transformMeasurementConcept(
+        cdm = cdm, newSet = cdm[[settingsTableName]] |> dplyr::collect(),
+        cohortName = cohortName, installedVersion = installedVersion,
+        timing = timingName, byConcept = byConcept, dateRange
+      )
   } else {
     measurementConcept <- NULL
   }
@@ -422,7 +421,8 @@ transformMeasurementValue <- function(x, cdm, newSet, cohortName, installedVersi
     ) |>
     dplyr::mutate(
       cdm_name = omopgenerics::cdmName(cdm),
-      unit_concept_name = dplyr::if_else(is.na(.data$unit_concept_name), "NA", .data$unit_concept_name),
+      unit_concept_name = dplyr::if_else(is.na(.data$unit_concept_name), "-", .data$unit_concept_name),
+      unit_concept_id = dplyr::if_else(.data$unit_concept_id == "NA", "-", .data$unit_concept_id),
       cohort_table = cohortName
     )
 
@@ -461,7 +461,8 @@ transformMeasurementConcept <- function(x, cdm, newSet, cohortName,
     dplyr::mutate(
       variable_name = gsub("_id", "_name", "value_as_concept_id"),
       cohort_table = cohortName,
-      value_as_concept_id = dplyr::if_else(is.na(.data$value_as_concept_id), "NA", .data$value_as_concept_id)
+      value_as_concept_id = dplyr::if_else(is.na(.data$value_as_concept_id), "-", .data$value_as_concept_id),
+      variable_level = dplyr::if_else(is.na(.data$variable_level), "-", .data$variable_level)
     )
 
   if (byConcept) {
@@ -535,6 +536,11 @@ getCohortFromCodes <- function(cdm, codes, settingsTableName, name) {
   tables <- list()
 
   for (tab in domains) {
+    n <- cdm[[settingsTableName]] |>
+      dplyr::filter(tolower(.data$domain_id) == tab) |>
+      dplyr::tally() |>
+      dplyr::pull()
+    cli::cli_inform(c(">" = "Getting {tab} records based on {n} concept{?s}."))
     tables[[tab]] <- cdm[[tab]] |>
       dplyr::rename("concept_id" = !!paste0(tab, "_concept_id")) |>
       dplyr::inner_join(
