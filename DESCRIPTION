@@ -19,7 +19,8 @@ Imports:
     omopgenerics (>= 1.2.0),
     PatientProfiles (>= 1.4.0),
     purrr,
-    rlang
+    rlang,
+    tidyr
 Suggests: 
     CDMConnector (>= 2.0.0),
     CodelistGenerator (>= 3.5.0),

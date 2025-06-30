@@ -10,11 +10,10 @@ test_that("summariseCohortMeasurementUse works", {
       result_type = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept"),
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
-      group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
+      group = c("cohort_name &&& codelist_name", "cohort_name &&& codelist_name &&& concept_name &&& unit_concept_name", "cohort_name &&& codelist_name &&& concept_name"),
       strata = c(rep("", 3)),
       additional = c("", "concept_id &&& unit_concept_id &&& domain_id", "concept_id &&& value_as_concept_id &&& domain_id"),
       min_cell_count = "0",
-      cohort_table = "my_cohort",
       timing = "any"
     )
   )
@@ -24,7 +23,7 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    as.character(c("1498", "21", "2332", "28", "4338.5", "5026", "96"))
+    as.character(c('0', '0', '11', '1206', '14', '1506', '1761', '20', '2316', '4322.75', '5026', '651', '9', '96'))
   )
   expect_equal(
     res |>
@@ -32,7 +31,7 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(variable_name) |>
       sort(),
-    c("number records", "number subjects", rep("time", 5))
+    c("number records", "number records", "number subjects", "number subjects", rep("time", 10))
   )
   expect_equal(
     res |>
@@ -40,7 +39,7 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_name) |>
       sort(),
-    c("count", "count", "max", "median", "min", "q25", "q75")
+    c(rep("count", 4), rep("max", 2), rep("median", 2), rep("min", 2), rep("q25", 2), rep("q75", 2))
   )
   expect_equal(
     res |>
@@ -48,13 +47,18 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c('0', '0', '0', '0', '108.989898989899', '108.989898989899', '12', '12',
-      '127.29797979798', '127.29797979798', '130.227272727273', '130.227272727273',
-      '147.070707070707', '147.070707070707', '148.535353535354', '148.535353535354',
-      '16', '16', '16.6666666666667', '16.6666666666667', '19.6464646464646',
-      '19.6464646464646', '2', '2', '26.969696969697', '26.969696969697',
-      '60.6565656565657', '60.6565656565657', '65.0505050505051', '65.0505050505051',
-      '79.6969696969697', '79.6969696969697')
+    c('0', '0', '0', '0', '0', '0', '0', '0', '10', '10', '10', '10', '101.666666666667',
+      '101.666666666667', '108.989898989899', '108.989898989899', '119.242424242424',
+      '119.242424242424', '123.636363636364', '123.636363636364', '123.636363636364',
+      '123.636363636364', '128.030303030303', '128.030303030303', '132.424242424242',
+      '132.424242424242', '133.156565656566', '133.156565656566', '133.888888888889',
+      '133.888888888889', '136.818181818182', '136.818181818182', '141.212121212121',
+      '141.212121212121', '147.070707070707', '147.070707070707', '148.535353535354',
+      '148.535353535354', '19.6464646464646', '19.6464646464646', '2', '2', '2', '2',
+      '20', '20', '26.969696969697', '26.969696969697', '4', '4', '40.1515151515152',
+      '40.1515151515152', '50', '50', '52.6010101010101', '52.6010101010101',
+      '59.1919191919192', '59.1919191919192', '66.5151515151515', '66.5151515151515',
+      '7', '7', '76.7676767676768', '76.7676767676768')
   )
   expect_equal(
     res |>
@@ -62,11 +66,15 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_name) |>
       sort(),
-    c('count', 'count', 'count', 'count', 'count_missing', 'count_missing',
-      'count_missing', 'count_missing', 'max', 'max', 'max', 'max', 'median',
-      'median', 'median', 'median', 'min', 'min', 'min', 'min', 'percentage_missing',
-      'percentage_missing', 'percentage_missing', 'percentage_missing', 'q25',
-      'q25', 'q25', 'q25', 'q75', 'q75', 'q75', 'q75')
+    c('count', 'count', 'count', 'count', 'count', 'count', 'count', 'count',
+      'count_missing', 'count_missing', 'count_missing', 'count_missing', 'count_missing',
+      'count_missing', 'count_missing', 'count_missing', 'max', 'max', 'max', 'max',
+      'max', 'max', 'max', 'max', 'median', 'median', 'median', 'median', 'median',
+      'median', 'median', 'median', 'min', 'min', 'min', 'min', 'min', 'min', 'min',
+      'min', 'percentage_missing', 'percentage_missing', 'percentage_missing',
+      'percentage_missing', 'percentage_missing', 'percentage_missing', 'percentage_missing',
+      'percentage_missing', 'q25', 'q25', 'q25', 'q25', 'q25', 'q25', 'q25', 'q25',
+      'q75', 'q75', 'q75', 'q75', 'q75', 'q75', 'q75', 'q75')
   )
   expect_equal(
     res |>
@@ -74,8 +82,9 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_value) |>
       sort(),
-    c('11', '11', '28.5714285714286', '28.5714285714286', '32.1428571428571',
-      '32.1428571428571', '39.2857142857143', '39.2857142857143', '8', '8', '9', '9')
+    c('1', '1', '25', '25', '30', '30', '36.3636363636364', '36.3636363636364',
+      '4', '4', '45', '45', '5', '5', '54.5454545454545', '54.5454545454545',
+      '6', '6', '6', '6', '9', '9', '9.09090909090909', '9.09090909090909')
   )
   expect_equal(
     res |>
@@ -83,8 +92,10 @@ test_that("summariseCohortMeasurementUse works", {
       dplyr::filter(strata_name == "overall") |>
       dplyr::pull(estimate_name) |>
       sort(),
-    c("count", "count", "count", "count", "count", "count", "percentage",
-      "percentage", "percentage", "percentage", "percentage", "percentage")
+    c('count', 'count', 'count', 'count', 'count', 'count', 'count', 'count', 'count',
+    'count', 'count', 'count', 'percentage', 'percentage', 'percentage', 'percentage',
+    'percentage', 'percentage', 'percentage', 'percentage', 'percentage', 'percentage',
+    'percentage', 'percentage')
   )
 })
 
@@ -136,7 +147,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_any |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_numeric") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name &&& unit_concept_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name &&& unit_concept_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c('100', '100', '12852', '12852', '5498', '5498')
@@ -144,7 +155,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_during |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_numeric") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name &&& unit_concept_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name &&& unit_concept_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c('100', '100', '29', '29', '61', '61')
@@ -152,7 +163,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_start |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_numeric") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name &&& unit_concept_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name &&& unit_concept_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c("1", "1", "100")
@@ -160,7 +171,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_any |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_concept") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c("100", "100", "12852", "5498")
@@ -168,7 +179,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_during |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_concept") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c("100", "100", "29", "61")
@@ -176,7 +187,7 @@ test_that("test timings with eunomia", {
   expect_equal(
     res_start |>
       omopgenerics::filterSettings(result_type == "measurement_value_as_concept") |>
-      dplyr::filter(strata_name == "overall", group_name != "codelist_name") |>
+      dplyr::filter(strata_name == "overall", group_name != "cohort_name &&& codelist_name") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c("1", "100")
@@ -200,7 +211,7 @@ test_that("summariseCohortMeasurementUse straifications work", {
   )
   expect_equal(
     res |>
-      dplyr::filter(result_id == 3, estimate_name == "count", strata_name == "year", group_level == "test") |>
+      dplyr::filter(result_id == 3, estimate_name == "count", strata_name == "year", group_level == "cohort_1 &&& test") |>
       dplyr::pull(estimate_value) |>
       sort(),
     c("1")
@@ -212,11 +223,10 @@ test_that("summariseCohortMeasurementUse straifications work", {
       result_type = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept"),
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
-      group = c("codelist_name", "codelist_name &&& concept_name &&& unit_concept_name", "codelist_name &&& concept_name"),
+      group = c("cohort_name &&& codelist_name", "cohort_name &&& codelist_name &&& concept_name &&& unit_concept_name", "cohort_name &&& codelist_name &&& concept_name"),
       strata = c(rep("sex &&& year", 3)),
       additional = c("", "concept_id &&& unit_concept_id &&& domain_id", "concept_id &&& value_as_concept_id &&& domain_id"),
       min_cell_count = "0",
-      cohort_table = "my_cohort",
       date_range = "1995-01-01 to 2020-01-01",
       timing = "during"
     )
@@ -237,17 +247,16 @@ test_that("summariseCohortMeasurementUse straifications work", {
       result_type = c("measurement_timings", "measurement_value_as_numeric", "measurement_value_as_concept"),
       package_name = "MeasurementDiagnostics",
       package_version = as.character(utils::packageVersion("MeasurementDiagnostics")),
-      group = c("codelist_name", "codelist_name &&& unit_concept_name", "codelist_name"),
+      group = c("cohort_name &&& codelist_name", "cohort_name &&& codelist_name &&& unit_concept_name", "cohort_name &&& codelist_name"),
       strata = c(rep("", 3)),
       additional = c("", "unit_concept_id", "value_as_concept_id"),
       min_cell_count = "0",
-      cohort_table = "my_cohort",
       timing = "during"
     )
   )
   expect_equal(
     res |>
-      dplyr::filter(group_level == "test3") |>
+      dplyr::filter(group_level == "cohort_1 &&& test3") |>
       dplyr::pull("estimate_value"),
     c("0", "0")
   )
