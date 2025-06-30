@@ -46,7 +46,7 @@ tableMeasurementValueAsNumeric <- function(result,
   checkVersion(result)
 
   columnOrder <- c(
-    "cdm_name", "codelist_name", "concept_name", "concept_id",
+    "cdm_name", "cohort_name", "codelist_name", "concept_name", "concept_id",
     "domain_id", "unit_concept_name", "unit_concept_id", "sex", "age_group",
     "year", settingsColumn, "variable_name", "variable_level", "estimate_name",
     "estimate_value"

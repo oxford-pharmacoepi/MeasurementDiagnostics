@@ -45,7 +45,7 @@ tableMeasurementTimings <- function(result,
 
   checkVersion(result)
 
-  columnOrder <- c("cdm_name", "codelist_name", "sex", "age_group", "year", settingsColumn, "variable_name", "variable_level", "estimate_name", "estimate_value")
+  columnOrder <- c("cdm_name", "cohort_name", "codelist_name", "sex", "age_group", "year", settingsColumn, "variable_name", "variable_level", "estimate_name", "estimate_value")
   # temp fix for visOmpReuslts issue 355
   columnOrder <- columnOrder[columnOrder %in% visOmopResults::tableColumns(result)]
 
