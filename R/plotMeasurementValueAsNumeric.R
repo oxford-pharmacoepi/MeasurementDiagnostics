@@ -33,6 +33,13 @@ plotMeasurementValueAsNumeric <- function(result,
   facet <- intersect(facet, plotCols)
   colour <- intersect(colour, plotCols)
 
+  # Remove overall option when byConcept is TRUE
+  if("codelist_name &&& concept_name" %in% result$group_name){
+    result <- result |>
+      dplyr::filter(.data$group_name %in% c("codelist_name &&& concept_name &&& unit_concept_name",
+                                            "codelist_name &&& concept_name"))
+  }
+
   # subset to rows of interest
   result <- result |>
     omopgenerics::filterSettings(.data$result_type == "measurement_value_as_numeric") |>
