@@ -38,8 +38,20 @@ plotMeasurementValueAsNumeric <- function(result,
     omopgenerics::filterSettings(.data$result_type == "measurement_value_as_numeric") |>
     dplyr::filter(.data$estimate_name %in% c("min", "q25", "median", "q75", "max"))
 
+  # Remove overall option when byConcept is TRUE
+  if("codelist_name &&& concept_name" %in% result$group_name){
+    result <- result |>
+      dplyr::filter(.data$group_name %in% c("codelist_name &&& concept_name &&& unit_concept_name",
+                                            "codelist_name &&& concept_name"))
+  }
+
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = measurement_value_as_numeric`")
+    return(visOmopResults::emptyPlot())
+  }
+
+  if(length(result |> dplyr::pull("estimate_value") |> unique()) == 1 && is.na((result |> dplyr::pull("estimate_value") |> unique()))){
+    cli::cli_warn("Numeric values are all NA")
     return(visOmopResults::emptyPlot())
   }
 

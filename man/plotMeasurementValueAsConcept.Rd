@@ -7,9 +7,9 @@
 plotMeasurementValueAsConcept(
   result,
   x = "count",
-  y = "variable_level",
-  facet = c("codelist_name", "concept_name"),
-  colour = c("cdm_name", visOmopResults::strataColumns(result))
+  y = "codelist_name",
+  facet = c("cdm_name"),
+  colour = c("concept_name", "variable_level", visOmopResults::strataColumns(result))
 )
 }
 \arguments{

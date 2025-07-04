@@ -22,13 +22,12 @@
 #' }
 plotMeasurementValueAsConcept <- function(result,
                                           x = "count",
-                                          y = "variable_level",
-                                          facet = c("codelist_name", "concept_name"),
-                                          colour = c("cdm_name", visOmopResults::strataColumns(result))) {
+                                          y = "codelist_name",
+                                          facet = c("cdm_name"),
+                                          colour = c("concept_name", "variable_level", visOmopResults::strataColumns(result))) {
   result <- omopgenerics::validateResultArgument(result)
   rlang::check_installed("visOmopResults")
   plotCols <- visOmopResults::plotColumns(result)
-  # to remove concept_name when byConcept is FALSE
   x <- intersect(x, plotCols)
   facet <- intersect(facet, plotCols)
   colour <- intersect(colour, plotCols)
@@ -36,6 +35,12 @@ plotMeasurementValueAsConcept <- function(result,
   # subset to rows of interest
   result <- result |>
     omopgenerics::filterSettings(.data$result_type == "measurement_value_as_concept")
+
+  #Remove overall option when byConcept is TRUE
+  if("codelist_name &&& concept_name" %in% result$group_name){
+    result <- result |>
+      dplyr::filter(.data$group_name == "codelist_name &&& concept_name")
+  }
 
   if (nrow(result) == 0) {
     cli::cli_warn("There are no results with `result_type = measurement_value_as_concept`")
