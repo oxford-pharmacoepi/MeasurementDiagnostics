@@ -2,4 +2,4 @@
 
 0 errors | 0 warnings | 1 notes
 
-* This is the first release.
+* New submission
