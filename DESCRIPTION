@@ -1,7 +1,7 @@
 Package: MeasurementDiagnostics
 Type: Package
-Title: Measurement codelist diagnostics for OMOPped data
-Version: 0.0.09
+Title: Diagnostics for Lists of Codes Based on Measurements
+Version: 0.0.1
 Authors@R: c(
     person("Edward", "Burn", , "edward.burn@ndorms.ox.ac.uk", 
     role = c("aut"), comment = c(ORCID = "0000-0002-9286-1128")),
@@ -9,7 +9,7 @@ Authors@R: c(
     role = c("aut", "cre"), comment = c(ORCID = "0009-0006-7948-3747")),
     person("Marta", "Alcalde-Herraiz", , "marta.alcaldeherraiz@ndorms.ox.ac.uk", 
     role = c("aut"), comment = c(ORCID = "0009-0002-4405-1814")))
-Description: Diagnostics of codelists based on concepts from the domain measurements. This package works for data mapped to the OMOP Common Data Model.
+Description: Diagnostics of list of codes based on concepts from the domains measurement and observation. This package works for data mapped to the Observational Medical Outcomes Partnership Common Data Model.
 Imports: 
     cli,
     CohortConstructor (>= 0.4.0),

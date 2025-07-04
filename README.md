@@ -6,8 +6,6 @@
 
 <!-- badges: start -->
 
-[![CRAN
-status](https://www.r-pkg.org/badges/version/MeasurementDiagnostics)](https://CRAN.R-project.org/package=MeasurementDiagnostics)
 [![R-CMD-check](https://github.com/OHDSI/MeasurementDiagnostics/workflows/R-CMD-check/badge.svg)](https://github.com/OHDSI/MeasurementDiagnostics/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/OHDSI/MeasurementDiagnostics/branch/main/graph/badge.svg)](https://app.codecov.io/gh/OHDSI/MeasurementDiagnostics?branch=main)
@@ -31,7 +29,7 @@ pak::pak("ohdsi/MeasurementDiagnostics")
 
 ## Example
 
-Let’s say we our going to do a study where we are going to be using
+Let’s say we are going to do a study where we are going to be using
 measurements of respiratory function. We can use MeasurementDiagnostics
 to better understand the use of these measurements.
 
@@ -61,6 +59,13 @@ library(MeasurementDiagnostics)
 
 ``` r
 con <- dbConnect(duckdb(), dbdir = eunomiaDir())
+#> Creating CDM database C:/Users/nmercade/Dropbox/Documents/IDIAP/Formations/Curs_Introduccio_OMOP/MockDB/GiBleed_5.3.zip
+#> ■■■■■■■■■■■■■■■■                  51% | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■               61% | ETA:  2s
+#> ■■■■■■■■■■■■■■■■■■■■■             66% | ETA:  1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■          78% | ETA:  1s
+#> ■■■■■■■■■■■■■■■■■■■■■■■■■■        83% | ETA:  1s
+#>                                                  
 cdm <- cdmFromCon(
   con = con, cdmSchem = "main", writeSchema = "main", cdmName = "Eunomia"
 )
@@ -91,20 +96,21 @@ repiratory_function_codes
 #> - respiratory function (3 codes)
 ```
 
-And now we can run a set of measurement diagnostic checks.
+And now we can run a set of measurement diagnostic checks, here
+stratifying results by sex.
 
 ``` r
 repiratory_function_measurements <- summariseMeasurementUse(cdm, repiratory_function_codes, bySex = TRUE)
-#> → Subsetting measurement table to the subjects and timing of interest.
-#> → Getting measurement records based on measurement codes.
+#> → Getting measurement records based on 3 concepts.
+#> → Subsetting records to the subjects and timing of interest.
 #> Warning: cohort_name must be snake case and have less than 100 characters, the following
 #> cohorts will be renamed:
 #> • respiratory function_4052083 -> respiratory_function_4052083
 #> • respiratory function_4133840 -> respiratory_function_4133840
 #> • respiratory function_3011505 -> respiratory_function_3011505
 #> → Getting time between records per person.
-#> → Summarising measurement results - value as number.
-#> → Summarising measurement results - value as concept.
+#> → Summarising results - value as number.
+#> → Summarising results - value as concept.
 #> → Binding all diagnostic results.
 ```
 

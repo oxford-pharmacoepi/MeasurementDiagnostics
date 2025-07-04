@@ -26,7 +26,7 @@ tableMeasurementTimings <- function(result,
                                     header = c(visOmopResults::strataColumns(result)),
                                     groupColumn = c("codelist_name"),
                                     settingsColumn = character(),
-                                    hide = c("variable_name", "variable_level"),
+                                    hide = c("variable_level"),
                                     style = "default",
                                     .options = list()){
   rlang::check_installed("visOmopResults")
